@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+}
+
+group 'ch.so.agi'
+version '0.0-SNAPSHOT'
+
+sourceCompatibility = 11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile 'commons-cli:commons-cli:1.4'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.12.1'
+    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.14.0'
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "ch.so.agi.sql2json.Application"
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
