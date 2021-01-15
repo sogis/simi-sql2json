@@ -18,6 +18,7 @@ public class Configuration {
     public static final String DB_PASSWORD = "p";
     public static final String LOG_LEVEL = "l";
     private static final String HELP = "h";
+    private static final String VERSION = "v";
 
     private static Logger log = LoggerFactory.getLogger(Configuration.class);
 
@@ -34,8 +35,10 @@ public class Configuration {
         createConfigMap();
 
         Options opt = optionsFromConfMap();
-        //add help option
-        opt.addOption(HELP, false, "Ausgabe des Hilfetexts zum Commandline-Tool sql2json");
+
+        String desc = "Ausgabe von Version und Hilfetext zum Commandline-Tool sql2json";
+        opt.addOption(HELP, false, desc);
+        opt.addOption(VERSION, false, desc);
 
         CommandLineParser parser = new DefaultParser();
         CommandLine para = null;
@@ -45,9 +48,19 @@ public class Configuration {
             log.error("Error parsing commandline params", e);
         }
 
-        if(para.hasOption(HELP)){
+
+        if(para.hasOption(HELP) || para.hasOption(VERSION)){
+
+            String version = this.getClass().getPackage().getImplementationVersion();
+
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp( "java -jar sql2json-[version].jar [options]. Options:", opt);
+            //formatter.printHelp( "Version: " + version + " \nUsage: java -jar sql2json.jar [options]. \nOptions:", opt);
+            formatter.printHelp(
+                    "java -jar sql2json.jar [options]",
+                    "options:",
+                    opt,
+                    "**************************************************************************\nversion: " + version,
+            false);
 
             helpPrinted = true;
             return;

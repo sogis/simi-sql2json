@@ -14,13 +14,18 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile 'commons-cli:commons-cli:1.4'
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.12.1'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.1'
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
 }
 
 jar {
     manifest {
-        attributes "Main-Class": "ch.so.agi.sql2json.Application"
+        attributes (
+                "Main-Class": "ch.so.agi.sql2json.Application",
+                "Implementation-Title": "sql2json",
+                "Implementation-Version": "0.0-SNAPSHOT",
+                "Implementation-Vendor": "Amt für Geoinformation, Kt. Solothurn"
+        )
     }
 
     from {

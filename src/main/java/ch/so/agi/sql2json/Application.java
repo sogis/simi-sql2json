@@ -1,7 +1,12 @@
 package ch.so.agi.sql2json;
 
+import ch.so.agi.sql2json.routing.TemplateWalker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+
+
 
 public class Application {
 
@@ -21,10 +26,21 @@ public class Application {
             if(conf.helpPrinted())
                 return;
 
-            conf.assertComplete();
+            //conf.assertComplete();
 
-//"debug", "info", "warn", "error" or "off"
+            String json = "{\"tableInfo\":{\"schemaName\":\"tiger\",\"description\":\"empty\",\"layers\":{\"$trafo:fuu\": \"bar\"},\"tvName\":\"county\"}}";
+            InputStream template = new ByteArrayInputStream(json.getBytes());
+            OutputStream output = new ByteArrayOutputStream();
 
+            try {
+                TemplateWalker.walkTemplate(template, output);
+            }
+            finally {
+                output.close();
+                template.close();
+            }
+
+            log.info(output.toString());
         }
         catch (Exception e){
             System.err.println(e.getMessage());
@@ -32,8 +48,6 @@ public class Application {
             log.error("Exception occured. Exiting...", e);
         }
     }
-
-
 
     public static Configuration conf(){return conf;}
 }
