@@ -1,0 +1,30 @@
+{
+  "obj": {
+    "schemaName": "tiger",
+    "description": null
+  },
+  "objarray": [{
+    "name": "gid",
+    "mandatory": true
+  },
+    {
+      "name": "name",
+      "mandatory": false
+    }
+  ],
+  "objlist": {
+    "ch.so.agi.gemeindegrenzen": {
+      "id": "ch.so.agi.gemeindegrenzen",
+      "title": "Gemeindegrenzen"
+    },
+    "ch.so.agi.kantonsgrenze": {
+      "id": "ch.so.agi.kantonsgrenze",
+      "title": "Kantonsgrenze"
+    }
+  },
+  "valuelist": [1, "zwei", 3],
+  "map": {
+    "ch.so.agi.gemeindegrenzen": 1,
+    "ch.so.agi.kantonsgrenze": 2
+  }
+}

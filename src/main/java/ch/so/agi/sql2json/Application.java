@@ -1,16 +1,18 @@
 package ch.so.agi.sql2json;
 
+import ch.so.agi.sql2json.log.Logging;
 import ch.so.agi.sql2json.routing.TemplateWalker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 
 import java.io.*;
 
-
-
 public class Application {
 
-    private static Logger log = LoggerFactory.getLogger(Application.class);
+    private static Logger log = LogManager.getLogger(Application.class);
 
     private static Configuration conf = null;
 
@@ -20,16 +22,14 @@ public class Application {
             conf = Configuration.createConfig4Args(args);
 
             String level = conf.getConfigValue(Configuration.LOG_LEVEL);
-            if(level != null && level.length() > 0)
-                System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", level);
+            Logging.initToLogLevel(level);
 
             if(conf.helpPrinted())
                 return;
 
-            //conf.assertComplete();
+            conf.assertComplete();
 
-            String json = "{\"tableInfo\":{\"schemaName\":\"tiger\",\"description\":\"empty\",\"layers\":{\"$trafo:fuu\": \"bar\"},\"tvName\":\"county\"}}";
-            InputStream template = new ByteArrayInputStream(json.getBytes());
+            String template = "{\"tableInfo\":{\"schemaName\":\"tiger\",\"description\":\"empty\",\"layers\":{\"$trafo:fuu\": \"bar\"},\"tvName\":\"county\"}}";
             OutputStream output = new ByteArrayOutputStream();
 
             try {
@@ -37,17 +37,15 @@ public class Application {
             }
             finally {
                 output.close();
-                template.close();
             }
 
             log.info(output.toString());
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
-
             log.error("Exception occured. Exiting...", e);
         }
     }
+
 
     public static Configuration conf(){return conf;}
 }

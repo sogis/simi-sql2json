@@ -4,8 +4,8 @@ import ch.so.agi.sql2json.TrafoException;
 import ch.so.agi.sql2json.template.Template;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Routes the JsonElements to the writer or to the corresponding sql-tag
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JsonElementRouter {
 
-    private static Logger log = LoggerFactory.getLogger(JsonElementRouter.class);
+    private static Logger log = LogManager.getLogger(JsonElementRouter.class);
 
     private JsonGenerator gen;
     private ObjectElementBuffer buf;
@@ -24,47 +24,67 @@ public class JsonElementRouter {
     }
 
     public void objStartElem(){
-        log.info("objStartElem()");
+        log.debug("objStartElem()");
 
         buf.objStartElem();
     }
 
     public void objEndElem(){
-        log.info("objEndElem()");
+        log.debug("objEndElem()");
 
-        boolean write = false;
+        boolean candidateIsTemplate = false;
         if (buf.isComplete()) {
             Template t = Template.forName(buf.getName());
-            if (t != null)
+            if (t != null){
+                candidateIsTemplate = true;
+                buf.reset();
+
                 t.execSql(buf.getValue(), gen);
-            else {
-                write = true;
             }
         }
-        else {
-            write = true;
-        }
 
-        if(write){
+        if(!candidateIsTemplate){
+            log.debug("kuckuck");
             try {
+                buf.flush();
                 gen.writeEndObject();
             }
             catch (Exception e) {
                 throw new TrafoException(e);
             }
         }
+    }
 
-        buf.reset();
+    public void arrayStartElem(){
+        log.debug("arrayStartElem()");
+
+        try {
+            gen.writeStartArray();
+        }
+        catch (Exception e) {
+            throw new TrafoException(e);
+        }
+    }
+
+    public void arrayEndElem(){
+        log.debug("arrayEndElem()");
+
+        try {
+            gen.writeEndArray();
+        }
+        catch (Exception e) {
+            throw new TrafoException(e);
+        }
     }
 
     public void paraName(String name) {
-        log.info("objEndElem(). name: {}", name);
+        log.debug("paraName(). name: {}", name);
 
         buf.paraName(name);
     }
 
     public void value(JsonToken type, Object value){
-        log.info("value(). type: {}, value: {}", type, value);
+        log.debug("value(). type: {}, value: {}", type, value);
 
         buf.value(type, value);
     }

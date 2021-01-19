@@ -1,8 +1,10 @@
 package ch.so.agi.sql2json;
 
 import org.apache.commons.cli.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ public class Configuration {
     private static final String HELP = "h";
     private static final String VERSION = "v";
 
-    private static Logger log = LoggerFactory.getLogger(Configuration.class);
+    private static Logger log = LogManager.getLogger(Configuration.class);
 
     private HashMap<String, ConfigurationEntry> confMap;
     private String errorMessage;
@@ -31,6 +33,7 @@ public class Configuration {
     }
 
     public Configuration(String[] args){
+        Configurator.setRootLevel(Level.INFO);
 
         createConfigMap();
 
@@ -48,25 +51,27 @@ public class Configuration {
             log.error("Error parsing commandline params", e);
         }
 
-
         if(para.hasOption(HELP) || para.hasOption(VERSION)){
-
-            String version = this.getClass().getPackage().getImplementationVersion();
-
-            HelpFormatter formatter = new HelpFormatter();
-            //formatter.printHelp( "Version: " + version + " \nUsage: java -jar sql2json.jar [options]. \nOptions:", opt);
-            formatter.printHelp(
-                    "java -jar sql2json.jar [options]",
-                    "options:",
-                    opt,
-                    "**************************************************************************\nversion: " + version,
-            false);
-
-            helpPrinted = true;
-            return;
+            showHelp(opt);
         }
 
         setConfigValues(para);
+    }
+
+    private void showHelp(Options opt){
+        String version = this.getClass().getPackage().getImplementationVersion();
+
+        HelpFormatter formatter = new HelpFormatter();
+        //formatter.printHelp( "Version: " + version + " \nUsage: java -jar sql2json.jar [options]. \nOptions:", opt);
+        formatter.printHelp(
+                "java -jar sql2json.jar [options]",
+                "options:",
+                opt,
+                "**************************************************************************\nversion: " + version,
+                false);
+
+        helpPrinted = true;
+        return;
     }
 
     private Options optionsFromConfMap(){
@@ -88,11 +93,11 @@ public class Configuration {
         addEntry(DB_CONNECTION, "SqlTrafo_DbConnection", "JDBC Connection-URL zur abzufragenden DB. Aufbau: jdbc:postgresql://host:port/database");
         addEntry(DB_USER, "SqlTrafo_DbUser", "Benutzername für die DB-Verbindung");
         addEntry(DB_PASSWORD, "SqlTrafo_DbPassword", "Passwort für die DB-Verbindung");
-        addEntry(LOG_LEVEL, "SqlTrafo_LogLevel", "Logging-Level: Silent, Info, Warn(ing), Debug");
+        addEntry(LOG_LEVEL, "SqlTrafo_LogLevel", "Logging-Level: debug, info, warn oder error");
     }
 
     private void addEntry(String cmdLineParam, String envVarName, String description){
-        Option o = new Option(cmdLineParam, description);
+        Option o = new Option(cmdLineParam, true, description);
 
         ConfigurationEntry c = new ConfigurationEntry();
         c.setCommandLineOption(o);
@@ -111,14 +116,14 @@ public class Configuration {
             String val = para.getOptionValue(key);
 
             if (val != null && val.length() > 0){
-                log.info("Using param value from commandline for -{0}", key);
+                log.info("Using param value from commandline for -{}", key);
             }
             else{
                 String envVarName = ce.getEnvVariableName();
                 val = System.getenv(envVarName);
 
                 if (val != null && val.length() > 0) {
-                    log.info("Using param value from env variable {0} for -{1}", envVarName, key);
+                    log.info("Using param value from env variable {} for -{}", envVarName, key);
                 }
                 else{
                     String errMsg = MessageFormat.format(
@@ -139,8 +144,12 @@ public class Configuration {
     }
 
     public void assertComplete(){
-        if(this.errorMessage != null)
+        if(this.errorMessage != null){
+            Options opt = optionsFromConfMap();
+            showHelp(opt);
+
             throw new TrafoException(errorMessage);
+        }
     }
 
     public String getConfigValue(String paramName){

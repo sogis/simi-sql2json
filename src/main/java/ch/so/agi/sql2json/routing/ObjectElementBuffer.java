@@ -3,8 +3,8 @@ package ch.so.agi.sql2json.routing;
 import ch.so.agi.sql2json.TrafoException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Buffers Elements for the JsonElementRouter and has the knowledge
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ObjectElementBuffer {
 
-    private static Logger log = LoggerFactory.getLogger(ObjectElementBuffer.class);
+    private static Logger log = LogManager.getLogger(ObjectElementBuffer.class);
 
     private JsonGenerator gen;
 
@@ -21,7 +21,7 @@ public class ObjectElementBuffer {
     private String name;
 
     private String value;
-    private  int valueCallCount;
+    private  int stringValueCallCount;
 
     public ObjectElementBuffer(JsonGenerator gen){
         this.gen = gen;
@@ -34,9 +34,9 @@ public class ObjectElementBuffer {
 
         if(objStarted){
             if(name != null){
-                if(valueCallCount == 0)
+                if(stringValueCallCount == 0)
                     state = State.CAND_NAMED;
-                else if(valueCallCount == 1)
+                else if(stringValueCallCount == 1)
                     state = State.CAND_COMPLETE;
                 else { //multible values
                     state = State.NO_CAND;
@@ -52,35 +52,6 @@ public class ObjectElementBuffer {
 
         return state;
     }
-/*
-    private State state(){
-        State state = null;
-
-        if(name == null || valueCallCount > 1){
-            if(!objStarted)
-                state = State.NO_CAND;
-            else
-                state = State.CAND_STARTED;
-        }
-        else {
-            if(name != null){
-
-                if(valueCallCount == 0){
-                    state = State.CAND_NAMED;
-                }
-                else if(valueCallCount == 1){
-                    state = State.CAND_COMPLETE;
-                }
-                else { //valueCallCount > 1
-                    state = State.NO_CAND;
-                }
-            }
-        }
-
-        return state;
-    }
-
- */
 
     public boolean isComplete(){
         return state() == State.CAND_COMPLETE;
@@ -89,20 +60,16 @@ public class ObjectElementBuffer {
     public void objStartElem(){
 
         State s = state();
-        if(s == State.CAND_NAMED){
-            try {
-                gen.writeStartObject();
-                gen.writeFieldName(this.name);
-            }
-            catch(Exception e){
-                throw new TrafoException(e);
-            }
+        if(s != State.NO_CAND){
+            flush(s);
+        }
+        else {
+            reset();
         }
 
-        reset();
         this.objStarted = true;
 
-        log.info("objStartElem(). endstate: {}", state());
+        log.debug("objStartElem(). endstate: {}", state());
     }
 
     public void paraName(String name) {
@@ -112,45 +79,77 @@ public class ObjectElementBuffer {
             this.name = name;
         }
         else {
-            try {
-                if (s == State.CAND_COMPLETE) { // write first param
-                    gen.writeStartObject();
-                    gen.writeFieldName(this.name);
-                    gen.writeString(this.value);
-                }
+            flush(s);
 
+            try {
                 gen.writeFieldName(name);
             }
-            catch(Exception e){
+            catch (Exception e){
                 throw new TrafoException(e);
             }
         }
 
-        log.info("paraName(). name: {}, endstate: {}", name, state());
+        log.debug("paraName(). name: {}, endstate: {}", name, state());
+    }
+
+    private void flush(State currState){
+        log.debug("flushing... state: {}", currState);
+        try {
+            if (currState == State.CAND_STARTED) {
+                gen.writeStartObject();
+            }
+            else if(currState == State.CAND_NAMED){
+                gen.writeStartObject();
+                gen.writeFieldName(this.name);
+            }
+            else if(currState == State.CAND_COMPLETE){
+                gen.writeStartObject();
+                gen.writeFieldName(this.name);
+                gen.writeString(this.value);
+            }
+
+            reset();
+        }
+        catch(Exception e){
+            throw new TrafoException(e);
+        }
+    }
+
+    public void flush(){
+        State s = state();
+        flush(s);
     }
 
     public void value(JsonToken type, Object value) {
 
-        State s = state();
-        if(s == State.CAND_NAMED && value != null && value instanceof String){
-            this.value = (String)value;
+        boolean candValue = false;
+        if(type == JsonToken.VALUE_STRING){
+
+            if(state() == State.CAND_NAMED){
+                this.value = (String)value;
+                candValue = true;
+            }
+
+            stringValueCallCount++;
         }
-        else{
+
+        if(!candValue) {
+            flush(state());
             writePrimitiveValue(type, value);
         }
 
-        valueCallCount++;
-        log.info("value(). type: {}, value: {}, endstate: {}", type, value, state());
+        log.debug("value(). type: {}, value: {}, endstate: {}", type, value, state());
     }
 
     public void reset(){
         this.objStarted = false;
         this.name = null;
         this.value = null;
-        this.valueCallCount = 0;
+        this.stringValueCallCount = 0;
     }
 
     private void writePrimitiveValue(JsonToken type, Object value) {
+        log.debug("Writing primitive value '{}' ...", value);
         try {
             if(type == JsonToken.VALUE_STRING)
                 gen.writeString((String)value);
@@ -164,8 +163,9 @@ public class ObjectElementBuffer {
             }
             else if(type == JsonToken.VALUE_TRUE || type == JsonToken.VALUE_FALSE)
                 gen.writeBoolean( (Boolean)value );
-            else if(type == JsonToken.VALUE_NULL)
+            else if(type == JsonToken.VALUE_NULL) {
                 gen.writeNull();
+            }
             else
                 throw new TrafoException("Writing json value for type {0} is not implemented", type);
         }
