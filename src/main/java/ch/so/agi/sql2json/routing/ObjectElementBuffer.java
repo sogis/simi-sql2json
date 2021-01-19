@@ -93,7 +93,7 @@ public class ObjectElementBuffer {
     }
 
     private void flush(State currState){
-        log.debug("flushing... state: {}", currState);
+        //log.debug("flushing... state: {}", currState);
         try {
             if (currState == State.CAND_STARTED) {
                 gen.writeStartObject();

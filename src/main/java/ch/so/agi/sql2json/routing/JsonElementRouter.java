@@ -1,7 +1,7 @@
 package ch.so.agi.sql2json.routing;
 
 import ch.so.agi.sql2json.TrafoException;
-import ch.so.agi.sql2json.template.Template;
+import ch.so.agi.sql2json.tag.BaseTag;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +34,7 @@ public class JsonElementRouter {
 
         boolean candidateIsTemplate = false;
         if (buf.isComplete()) {
-            Template t = Template.forName(buf.getName());
+            BaseTag t = BaseTag.forName(buf.getName());
             if (t != null){
                 candidateIsTemplate = true;
                 buf.reset();
@@ -44,7 +44,6 @@ public class JsonElementRouter {
         }
 
         if(!candidateIsTemplate){
-            log.debug("kuckuck");
             try {
                 buf.flush();
                 gen.writeEndObject();

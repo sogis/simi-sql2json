@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
@@ -18,7 +17,7 @@ public class TemplateWalker {
 
     private static Logger log = LogManager.getLogger(TemplateWalker.class);
 
-    public static void walkTemplate(String template, OutputStream output) throws Exception{
+    public static void walkTemplate(String template, OutputStream output) throws Exception {
 
         JsonFactory factory = new JsonFactory();
 
