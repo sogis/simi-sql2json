@@ -1,5 +1,6 @@
 package ch.so.agi.sql2json.log;
 
+import ch.so.agi.sql2json.Application;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

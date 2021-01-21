@@ -1,5 +1,6 @@
 package ch.so.agi.sql2json;
 
+import ch.so.agi.sql2json.exception.TrafoException;
 import org.apache.commons.cli.*;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -24,15 +25,25 @@ public class Configuration {
 
     private static Logger log = LogManager.getLogger(Configuration.class);
 
+    private static Configuration conf;
+
     private HashMap<String, ConfigurationEntry> confMap;
     private String errorMessage;
     private boolean helpPrinted;
 
-    public static Configuration createConfig4Args(String[] args){
-        return new Configuration(args);
+    public static void createConfig4Args(String[] args){
+        conf = new Configuration(args);
     }
 
-    public Configuration(String[] args){
+    public static String valueForKey(String confName){
+        return conf.getConfigValue(confName);
+    }
+
+    public static void _updateValueForKey(String confName, String confValue){
+        conf.updateValueForKey(confName, confValue);
+    }
+
+    private Configuration(String[] args){
         Configurator.setRootLevel(Level.INFO);
 
         createConfigMap();
@@ -152,10 +163,16 @@ public class Configuration {
         }
     }
 
-    public String getConfigValue(String paramName){
+    private String getConfigValue(String paramName){
 
         ConfigurationEntry entry = confMap.get(paramName);
         return entry.getValue();
+    }
+
+    private void updateValueForKey(String confName, String confValue){
+
+        ConfigurationEntry ce = confMap.get(confName);
+        ce.setValue(confValue);
     }
 
     public boolean helpPrinted(){

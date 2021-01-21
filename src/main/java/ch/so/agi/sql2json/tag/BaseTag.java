@@ -1,6 +1,6 @@
 package ch.so.agi.sql2json.tag;
 
-import ch.so.agi.sql2json.TrafoException;
+import ch.so.agi.sql2json.exception.TrafoException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,6 +24,9 @@ public class BaseTag {
 
         BaseTag base = new BaseTag();
         templates.put(base.fullTagName(), base);
+
+        ListTag arr = new ListTag();
+        templates.put(arr.fullTagName(), arr);
     }
 
     public static BaseTag forName(String name){

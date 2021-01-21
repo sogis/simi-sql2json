@@ -1,6 +1,6 @@
 package ch.so.agi.sql2json.routing;
 
-import ch.so.agi.sql2json.TrafoException;
+import ch.so.agi.sql2json.exception.TrafoException;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;

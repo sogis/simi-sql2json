@@ -19,9 +19,9 @@ public class Application {
     public static void main(String[] args){
 
         try {
-            conf = Configuration.createConfig4Args(args);
+            Configuration.createConfig4Args(args);
 
-            String level = conf.getConfigValue(Configuration.LOG_LEVEL);
+            String level = Configuration.valueForKey(Configuration.LOG_LEVEL);
             Logging.initToLogLevel(level);
 
             if(conf.helpPrinted())
