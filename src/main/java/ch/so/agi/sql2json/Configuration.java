@@ -39,20 +39,12 @@ public class Configuration {
         return conf.getConfigValue(confName);
     }
 
-    public static void _updateValueForKey(String confName, String confValue){
-        conf.updateValueForKey(confName, confValue);
-    }
-
     private Configuration(String[] args){
         Configurator.setRootLevel(Level.INFO);
 
         createConfigMap();
 
         Options opt = optionsFromConfMap();
-
-        String desc = "Ausgabe von Version und Hilfetext zum Commandline-Tool sql2json";
-        opt.addOption(HELP, false, desc);
-        opt.addOption(VERSION, false, desc);
 
         CommandLineParser parser = new DefaultParser();
         CommandLine para = null;
@@ -64,6 +56,7 @@ public class Configuration {
 
         if(para.hasOption(HELP) || para.hasOption(VERSION)){
             showHelp(opt);
+            return;
         }
 
         setConfigValues(para);
@@ -73,12 +66,14 @@ public class Configuration {
         String version = this.getClass().getPackage().getImplementationVersion();
 
         HelpFormatter formatter = new HelpFormatter();
-        //formatter.printHelp( "Version: " + version + " \nUsage: java -jar sql2json.jar [options]. \nOptions:", opt);
+
+        String sep = "**************************************************************************";
+
         formatter.printHelp(
-                "java -jar sql2json.jar [options]",
+                MessageFormat.format("\n{0}\njava -jar sql2json.jar [options]", sep),
                 "options:",
                 opt,
-                "**************************************************************************\nversion: " + version,
+                MessageFormat.format("---------\nversion: {0}\n{1}", version, sep),
                 false);
 
         helpPrinted = true;
@@ -104,11 +99,16 @@ public class Configuration {
         addEntry(DB_CONNECTION, "SqlTrafo_DbConnection", "JDBC Connection-URL zur abzufragenden DB. Aufbau: jdbc:postgresql://host:port/database");
         addEntry(DB_USER, "SqlTrafo_DbUser", "Benutzername für die DB-Verbindung");
         addEntry(DB_PASSWORD, "SqlTrafo_DbPassword", "Passwort für die DB-Verbindung");
-        addEntry(LOG_LEVEL, "SqlTrafo_LogLevel", "Logging-Level: debug, info, warn oder error");
+        addEntry(LOG_LEVEL, "SqlTrafo_LogLevel", "Logging-Level: debug, info, warn oder error. Default: info");
+
+        String desc = "Ausgabe von Version und Hilfetext zum Commandline-Tool sql2json";
+        addEntry(HELP, null, desc);
+        addEntry(VERSION, null, desc);
     }
 
     private void addEntry(String cmdLineParam, String envVarName, String description){
-        Option o = new Option(cmdLineParam, true, description);
+
+        Option o = new Option(cmdLineParam, envVarName != null, description);
 
         ConfigurationEntry c = new ConfigurationEntry();
         c.setCommandLineOption(o);
@@ -123,6 +123,9 @@ public class Configuration {
 
         for (ConfigurationEntry ce : confMap.values()){
 
+            if(ce.getEnvVariableName() == null) //skip for help, version options
+                continue;
+
             String key = ce.getCommandLineOption().getOpt();
             String val = para.getOptionValue(key);
 
@@ -136,7 +139,11 @@ public class Configuration {
                 if (val != null && val.length() > 0) {
                     log.info("Using param value from env variable {} for -{}", envVarName, key);
                 }
-                else{
+                else if (LOG_LEVEL.equals(ce.getCommandLineOption())){
+                    ce.setValue("INFO");
+                    log.info("Loglevel not specified. Defaulting to info");
+                }
+                else {
                     String errMsg = MessageFormat.format(
                             "Either set param -{0} on commandline, or define env variable {1}",
                             key,
@@ -154,7 +161,9 @@ public class Configuration {
         }
     }
 
-    public void assertComplete(){
+    public static void assertComplete(){ conf._assertComplete(); }
+
+    private void _assertComplete(){
         if(this.errorMessage != null){
             Options opt = optionsFromConfMap();
             showHelp(opt);
@@ -169,13 +178,7 @@ public class Configuration {
         return entry.getValue();
     }
 
-    private void updateValueForKey(String confName, String confValue){
-
-        ConfigurationEntry ce = confMap.get(confName);
-        ce.setValue(confValue);
-    }
-
-    public boolean helpPrinted(){
-        return helpPrinted;
+    public static boolean helpPrinted(){
+        return conf.helpPrinted;
     }
 }

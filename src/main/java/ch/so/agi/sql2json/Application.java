@@ -3,10 +3,8 @@ package ch.so.agi.sql2json;
 import ch.so.agi.sql2json.log.Logging;
 import ch.so.agi.sql2json.routing.TemplateWalker;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.Configurator;
 
 import java.io.*;
 
@@ -21,13 +19,13 @@ public class Application {
         try {
             Configuration.createConfig4Args(args);
 
-            String level = Configuration.valueForKey(Configuration.LOG_LEVEL);
-            Logging.initToLogLevel(level);
-
-            if(conf.helpPrinted())
+            if(Configuration.helpPrinted())
                 return;
 
-            conf.assertComplete();
+            Configuration.assertComplete();
+
+            String level = Configuration.valueForKey(Configuration.LOG_LEVEL);
+            Logging.initToLogLevel(level);
 
             String template = "{\"tableInfo\":{\"schemaName\":\"tiger\",\"description\":\"empty\",\"layers\":{\"$trafo:fuu\": \"bar\"},\"tvName\":\"county\"}}";
             OutputStream output = new ByteArrayOutputStream();
