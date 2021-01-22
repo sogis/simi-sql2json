@@ -4,7 +4,7 @@ import java.text.MessageFormat;
 
 public class TrafoException extends RuntimeException {
 
-    private Type type;
+    private ExType type;
 
     public TrafoException(String msg){ super(msg); }
 
@@ -14,18 +14,17 @@ public class TrafoException extends RuntimeException {
         super(MessageFormat.format(msg, msgValues));
     }
 
-    public TrafoException(Type type, String msg, Object... msgValues){
+    public TrafoException(Exception inner, String msg, Object... msgValues){
+        super(MessageFormat.format(msg, msgValues), inner);
+    }
 
+    public TrafoException(ExType type, String msg, Object... msgValues){
         super(MessageFormat.format(msg, msgValues));
         this.type = type;
     }
 
-    public Type getType(){
+    public ExType getType(){
         return type;
-    }
-
-    public enum Type {
-        NO_ROWS, COLUMNTYPE_UNKNOWN
     }
 }
 

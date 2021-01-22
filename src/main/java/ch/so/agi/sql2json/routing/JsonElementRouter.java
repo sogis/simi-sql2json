@@ -36,10 +36,27 @@ public class JsonElementRouter {
         if (buf.isComplete()) {
             BaseTag t = BaseTag.forName(buf.getName());
             if (t != null){
-                t.execSql(buf.getValue(), gen);
+                try {
+                    candidateIsTemplate = true;
+                    t.execSql(buf.getValue(), gen);
+                }
+                catch(Exception e){
+                    try {
+                        buf.flushWithException(e);
+                        gen.writeEndObject();
 
-                candidateIsTemplate = true;
-                buf.reset();
+                        if(e instanceof TrafoException)
+                            TemplateWalker.addTagException((TrafoException)e);
+                        else
+                            TemplateWalker.addTagException(new TrafoException(e, "{0}: Exception occurred while executing tag", buf.getValue()));
+                    }
+                    catch (Exception ex) {
+                        throw new TrafoException(ex);
+                    }
+                }
+                finally {
+                    buf.reset();
+                }
             }
         }
 
@@ -87,8 +104,4 @@ public class JsonElementRouter {
 
         buf.value(type, value);
     }
-
-
-
-
 }

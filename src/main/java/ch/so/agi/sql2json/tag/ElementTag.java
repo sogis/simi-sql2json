@@ -10,10 +10,10 @@ import org.apache.logging.log4j.Logger;
 import java.sql.*;
 import java.util.Properties;
 
-public class ListTag extends BaseTag {
+public class ElementTag extends BaseTag {
 
-    private static Logger log = LogManager.getLogger(ListTag.class);
-    private static final String TEMPLATE_SUFFIX = "list";
+    private static Logger log = LogManager.getLogger(ElementTag.class);
+    private static final String TEMPLATE_SUFFIX = "elem";
 
     @Override
     protected String fullTagName(){
@@ -37,8 +37,6 @@ public class ListTag extends BaseTag {
             ResultSet rs = st.executeQuery(sql);
             JsonType type = checkColumnStructure(rs, sqlFileName);
 
-            gen.writeStartArray();
-
             int rowCount = 0;
             while (rs.next())
             {
@@ -48,10 +46,9 @@ public class ListTag extends BaseTag {
             rs.close();
 
             log.info("{}: Processed {} rows.", sqlFileName, rowCount);
-            if(rowCount == 0)
-                throw new TrafoException(ExType.NO_ROWS, "Query {0} returned no rows", sqlFileName);
-
-            gen.writeEndArray();
+            if(rowCount > 1){
+                throw new TrafoException(ExType.TOO_MANY_ROWS, "{0}: Query returned more than one row", sqlFileName);
+            }
         }
         catch(Exception e){
             if(e instanceof TrafoException)
@@ -74,3 +71,4 @@ public class ListTag extends BaseTag {
         return Tags.inferColType(meta, 1, fileName);
     }
 }
+

@@ -1,8 +1,12 @@
 package ch.so.agi.sql2json.routing;
 
 import ch.so.agi.sql2json.Configuration;
+import ch.so.agi.sql2json.exception.AggregateException;
+import ch.so.agi.sql2json.exception.ExType;
 import ch.so.agi.sql2json.exception.TrafoException;
 import ch.so.agi.sql2json.tag.BaseTag;
+import ch.so.agi.sql2json.tag.JsonType;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
@@ -12,6 +16,12 @@ import java.nio.file.Path;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+    /*
+    Integration Tests:
+    - memory footprint --> use jvm params to limit memory
+    - Return values for sunny and error execution
+     */
 
 public class TemplateWalkerTest {
 
@@ -26,20 +36,13 @@ public class TemplateWalkerTest {
       "-l", "debug"
     };
 
-
-
-    public static final String TEMPLATE_PATH = "t";
-    public static final String OUTPUT_PATH = "o";
-    public static final String DB_CONNECTION = "c";
-    public static final String DB_USER = "u";
-    public static final String DB_PASSWORD = "p";
-    public static final String LOG_LEVEL = "l";
-    private static final String HELP = "h";
-    private static final String VERSION = "v";
+    private static final String LIST_MARKER = "§list_ok§";
+    private static final String SET_MARKER = "§set_ok§";
 
     @Test
     void withoutTag_Identical_OK() throws Exception {
 
+        initConfigForTest();
         String template = loadTestJson();
         ByteArrayOutputStream output = null;
 
@@ -58,6 +61,8 @@ public class TemplateWalkerTest {
 
     @Test
     void withoutTag_CandiateAfterObjValue_OK() throws Exception {
+
+        initConfigForTest();
         String template = loadTestJson();
         ByteArrayOutputStream output = null;
 
@@ -79,7 +84,148 @@ public class TemplateWalkerTest {
 
         initConfigForTest();
         execAndValidate(BaseTag.MARKER_VALUE);
-/*
+    }
+
+    @Test
+    void list_OfJsonb_OK() throws Exception {
+
+        initConfigForTest();
+        execAndValidate(LIST_MARKER);
+    }
+
+    @Test
+    void list_OfJson_OK() throws Exception {
+
+        initConfigForTest();
+        execAndValidate(LIST_MARKER);
+    }
+
+    @Test
+    void list_OfString_OK() throws Exception {
+
+        initConfigForTest();
+        execAndValidate(LIST_MARKER);
+    }
+
+    @Test
+    void list_WithNullValues_OK() throws Exception {
+
+        initConfigForTest();
+        execAndValidate(LIST_MARKER);
+    }
+
+    @Test
+    void list_NoRows_ThrowsCorrect() throws Exception {
+
+        initConfigForTest();
+        execAndAssertRaises(ExType.NO_ROWS);
+    }
+
+    @Test
+    void list_UnknownColumnType_ThrowsCorrect() throws Exception {
+
+        initConfigForTest();
+        execAndAssertRaises(ExType.VAL_COLUMNTYPE_UNKNOWN);
+    }
+
+    @Test
+    void set_OfJson_OK() throws Exception {
+
+        initConfigForTest();
+        execAndValidate(SET_MARKER);
+    }
+
+    @Test
+    void set_OfString_OK() throws Exception {
+
+        initConfigForTest();
+        execAndValidate(SET_MARKER);
+    }
+
+    @Test
+    void set_MissingColumn_ThrowsCorrect() throws Exception {
+
+        initConfigForTest();
+        execAndAssertRaises(ExType.MISSING_COLUMNS);
+    }
+
+    @Test
+    void set_InvalidKeyColumnType_ThrowsCorrect() throws Exception {
+
+        initConfigForTest();
+        execAndAssertRaises(ExType.WRONG_KEY_COLUMNTYPE);
+    }
+
+    @Test
+    void elem_OfString_OK() throws Exception {
+
+        initConfigForTest();
+        execAndValidate("§elem_ok§");
+    }
+
+    @Test
+    void elem_OfJson_OK() throws Exception {
+
+        initConfigForTest();
+        execAndValidate("§elem_ok§");
+    }
+
+    @Test
+    void elem_OfNull_OK() throws Exception {
+
+        initConfigForTest();
+        execAndValidate("§ident§", null);
+    }
+
+    @Test
+    void elem_OfNumber_OK() throws Exception {
+
+        initConfigForTest();
+        execAndValidate("§ident§", JsonType.NUMBER);
+    }
+
+    @Test
+    void elem_OfBoolean_OK() throws Exception {
+
+        initConfigForTest();
+        execAndValidate("§ident§", JsonType.BOOLEAN);
+    }
+
+    @Test
+    void mixedTags_WithErrors_WritesToEnd() throws Exception {
+
+        initConfigForTest();
+
+        String template = loadTestJson();
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        assertThrows(AggregateException.class, () -> {TemplateWalker.walkTemplate(template, output);});
+
+        String resJson = readAll(output);
+        assertTrue(resJson.contains("§last_element§"), "Resulting json does not contain the marker string");
+        assertDoesNotThrow(() -> {mapper.readTree(resJson);});
+    }
+
+    private void execAndAssertRaises(ExType exType) throws Exception{
+        String template = loadTestJson();
+        ByteArrayOutputStream output = null;
+
+        try {
+            output = new ByteArrayOutputStream();
+
+            TemplateWalker.walkTemplate(template, output);
+            readAll(output);
+        }
+        catch(AggregateException t){
+            if(!exType.equals(t.firstException().getType()))
+                handle(t, output);
+        }
+        catch(Exception e){
+            handle(e, output);
+        }
+    }
+
+    private void execAndValidate(String jsonObjectKey, JsonType type) throws Exception{
         String template = loadTestJson();
         ByteArrayOutputStream output = null;
 
@@ -89,70 +235,32 @@ public class TemplateWalkerTest {
             TemplateWalker.walkTemplate(template, output);
             String resJson = readAll(output);
 
-            assertTrue(resJson.contains(BaseTag.MARKER_VALUE), "Resulting json does not contain the marker string");
-            assertDoesNotThrow(() -> {mapper.readTree(resJson);});
-        }
-        catch(Exception e){
-            handle(e, output);
-        }*/
-    }
+            JsonNode node = mapper.readTree(resJson); // the tested json object
 
-    @Test
-    void list_Jsonb_OK() throws Exception {
-
-        initConfigForTest();
-        execAndValidate("§list_ok§");
-    }
-
-    @Test
-    void list_Json_OK() throws Exception {
-
-        initConfigForTest();
-        execAndValidate("§list_ok§");
-    }
-
-    @Test
-    void list_NoRows_ThrowsCorrect() throws Exception {
-
-        initConfigForTest();
-        execAndAssertRaises(TrafoException.Type.NO_ROWS);
-    }
-
-    @Test
-    void list_UnknownColumnType_ThrowsCorrect() throws Exception {
-
-        initConfigForTest();
-        execAndAssertRaises(TrafoException.Type.COLUMNTYPE_UNKNOWN);
-    }
-
-    private String execAndAssertRaises(TrafoException.Type exType) throws Exception{
-        String template = loadTestJson();
-        ByteArrayOutputStream output = null;
-
-        String resJson = null;
-
-        try {
-            output = new ByteArrayOutputStream();
-
-            TemplateWalker.walkTemplate(template, output);
-            resJson = readAll(output);
-        }
-        catch(TrafoException t){
-            if(!exType.equals(t.getType()))
-                handle(t, output);
+            if(type == null) { // for json null...
+                if(!node.findValue(jsonObjectKey).isNull())
+                    throw new TrafoException("Expected 'null' as value for key '{0}'", jsonObjectKey);
+            }
+            else if(type == JsonType.NUMBER){
+                if(!node.findValue(jsonObjectKey).isInt())
+                    throw new TrafoException("Expected integer as value for key '{0}'", jsonObjectKey);
+            }
+            else if(type == JsonType.BOOLEAN){
+                if(!node.findValue(jsonObjectKey).isBoolean())
+                    throw new TrafoException("Expected boolean as value for key '{0}'", jsonObjectKey);
+            }
+            else {
+                throw new TrafoException("Method execAndValidate(...) does not handle JsonType '{0}'", type);
+            }
         }
         catch(Exception e){
             handle(e, output);
         }
-
-        return resJson;
     }
 
-    private String execAndValidate(String outputMarker) throws Exception{
+    private void execAndValidate(String outputMarker) throws Exception{
         String template = loadTestJson();
         ByteArrayOutputStream output = null;
-
-        String res = null;
 
         try {
             output = new ByteArrayOutputStream();
@@ -162,26 +270,11 @@ public class TemplateWalkerTest {
 
             assertTrue(resJson.contains(outputMarker), "Resulting json does not contain the marker string");
             assertDoesNotThrow(() -> {mapper.readTree(resJson);});
-
-            res = resJson;
         }
         catch(Exception e){
             handle(e, output);
         }
-
-        return res;
     }
-
-    /*
-    Tests:
-    - Alle primitiven Einzelwerte
-        Hier: Mapping auf den entsprechenden Json-Typ untersuchen und verifizieren
-    - map aus Tabelle
-    - Array aus Tabelle
-    - Query ohne result
-    - Query mit rescolumn unbekannten typs
-    - Query mit null-Werten
-     */
 
     private static void handle(Exception e, ByteArrayOutputStream out) throws Exception {
         System.err.println("Error occured. Written json-output before error: ");

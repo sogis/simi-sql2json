@@ -27,6 +27,12 @@ public class BaseTag {
 
         ListTag arr = new ListTag();
         templates.put(arr.fullTagName(), arr);
+
+        SetTag set = new SetTag();
+        templates.put(set.fullTagName(), set);
+
+        ElementTag elem = new ElementTag();
+        templates.put(elem.fullTagName(), elem);
     }
 
     public static BaseTag forName(String name){

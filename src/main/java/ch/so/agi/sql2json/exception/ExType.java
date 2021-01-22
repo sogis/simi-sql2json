@@ -1,0 +1,5 @@
+package ch.so.agi.sql2json.exception;
+
+public enum ExType {
+    NO_ROWS, VAL_COLUMNTYPE_UNKNOWN, WRONG_KEY_COLUMNTYPE, MISSING_COLUMNS, TOO_MANY_ROWS, TAG_EX_COLLECTION
+}

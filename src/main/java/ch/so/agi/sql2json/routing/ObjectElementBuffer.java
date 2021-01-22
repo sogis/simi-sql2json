@@ -6,6 +6,8 @@ import com.fasterxml.jackson.core.JsonToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.StringReader;
+
 /**
  * Buffers Elements for the JsonElementRouter and has the knowledge
  * whether the json object elments match the "signature" of the
@@ -118,6 +120,17 @@ public class ObjectElementBuffer {
     public void flush(){
         State s = state();
         flush(s);
+    }
+
+    public void flushWithException(Exception e){
+        flush();
+
+        try {
+            gen.writeStringField("exception", e.toString());
+        }
+        catch(Exception ex){
+            throw new TrafoException(ex);
+        }
     }
 
     public void value(JsonToken type, Object value) {

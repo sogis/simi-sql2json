@@ -10,10 +10,10 @@ import org.apache.logging.log4j.Logger;
 import java.sql.*;
 import java.util.Properties;
 
-public class ListTag extends BaseTag {
+public class SetTag extends BaseTag {
 
-    private static Logger log = LogManager.getLogger(ListTag.class);
-    private static final String TEMPLATE_SUFFIX = "list";
+    private static Logger log = LogManager.getLogger(SetTag.class);
+    private static final String TEMPLATE_SUFFIX = "set";
 
     @Override
     protected String fullTagName(){
@@ -22,7 +22,7 @@ public class ListTag extends BaseTag {
 
     @Override
     public void execSql(String sqlFileName, JsonGenerator gen){
-        log.info("execSql()");
+        log.info("{}: Executing sql ...");
 
         String url = Configuration.valueForKey(Configuration.DB_CONNECTION);
         Properties props = new Properties();
@@ -37,21 +37,22 @@ public class ListTag extends BaseTag {
             ResultSet rs = st.executeQuery(sql);
             JsonType type = checkColumnStructure(rs, sqlFileName);
 
-            gen.writeStartArray();
+            gen.writeStartObject();
 
             int rowCount = 0;
             while (rs.next())
             {
-                Tags.writeElement(rs,1, type, gen);
+                gen.writeFieldName(rs.getString(1));
+                Tags.writeElement(rs, 2, type, gen);
                 rowCount++;
             }
             rs.close();
 
             log.info("{}: Processed {} rows.", sqlFileName, rowCount);
             if(rowCount == 0)
-                throw new TrafoException(ExType.NO_ROWS, "Query {0} returned no rows", sqlFileName);
+                throw new TrafoException(ExType.NO_ROWS, "{0}: Query returned no rows", sqlFileName);
 
-            gen.writeEndArray();
+            gen.writeEndObject();
         }
         catch(Exception e){
             if(e instanceof TrafoException)
@@ -66,11 +67,16 @@ public class ListTag extends BaseTag {
         ResultSetMetaData meta = rs.getMetaData();
 
         int numCols = meta.getColumnCount();
-        if(numCols > 1)
-            log.warn("{}: Query returned more than one column. Using first column.", fileName);
+        if (numCols < 2)
+            throw new TrafoException(ExType.MISSING_COLUMNS,
+                    "{0}: Query for SetTag must return two columns", fileName);
+        else if (numCols > 2)
+            log.warn("{}: Query returned more than two columns. Using first for key and second for value (json element).", fileName);
 
-        log.info("Column type: int '{}' name '{}'", meta.getColumnType(1), meta.getColumnTypeName (1));
+        JsonType keyType = Tags.inferColType(meta, 1, fileName);
+        if(keyType != JsonType.STRING)
+            throw new TrafoException(ExType.WRONG_KEY_COLUMNTYPE, "{0}: first column must be a string type for the json key", fileName);
 
-        return Tags.inferColType(meta, 1, fileName);
+        return Tags.inferColType(meta, 2, fileName);
     }
 }
