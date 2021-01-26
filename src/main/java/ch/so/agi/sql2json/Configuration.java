@@ -36,11 +36,41 @@ public class Configuration {
     }
 
     public static String valueForKey(String confName){
-        return conf.getConfigValue(confName);
+
+        ConfigurationEntry entry = conf.confMap.get(confName);
+        String value = resolveValue(entry);
+
+        return value;
     }
 
     private Configuration(String[] args){
-        Configurator.setRootLevel(Level.INFO);
+
+        createConfigMapWithoutValues();
+
+        Options opt = optionsFromConfMap();
+
+        CommandLineParser parser = new DefaultParser();
+        CommandLine para = null;
+
+        try {
+            para = parser.parse(opt, args);
+        } catch (ParseException e) {
+            throw new TrafoException(e);
+        }
+
+        if(para.hasOption(HELP) || para.hasOption(VERSION)){
+            showHelp(opt);
+            return;
+        }
+
+        setCommandLineValues(para);
+
+        //create the Options
+
+        //create the configMap with commandLineValue (if present)
+
+        /*
+        //Configurator.setRootLevel(Level.INFO);
 
         createConfigMap();
 
@@ -48,6 +78,7 @@ public class Configuration {
 
         CommandLineParser parser = new DefaultParser();
         CommandLine para = null;
+
         try {
             para = parser.parse(opt, args);
         } catch (ParseException e) {
@@ -59,7 +90,9 @@ public class Configuration {
             return;
         }
 
-        setConfigValues(para);
+        //setConfigValues(para);
+        */
+
     }
 
     private void showHelp(Options opt){
@@ -90,7 +123,7 @@ public class Configuration {
         return opt;
     }
 
-    private void createConfigMap(){
+    private void createConfigMapWithoutValues(){
 
         this.confMap = new HashMap<String, ConfigurationEntry>();
 
@@ -117,11 +150,33 @@ public class Configuration {
         confMap.put(cmdLineParam, c);
     }
 
+    private void setCommandLineValues(CommandLine para) {
+        for (ConfigurationEntry ce : confMap.values()){
+            String key = ce.getCommandLineOption().getOpt();
+            ce.setCommandLineValue(para.getOptionValue(key));
+        }
+    }
+
+     /*
     private void setConfigValues(CommandLine para){
 
         List<String> missingParams = new ArrayList<>();
 
         for (ConfigurationEntry ce : confMap.values()){
+
+            String val = resolveValue(ce);
+
+            if(val == null) {
+
+                String errMsg = MessageFormat.format(
+                        "Either set param -{0} on commandline, or define env variable {1}",
+                        ce.getCommandLineOption().getOpt(),
+                        ce.getEnvVariableName());
+
+                missingParams.add(errMsg);
+            }
+
+
 
             if(ce.getEnvVariableName() == null) //skip for help, version options
                 continue;
@@ -154,28 +209,94 @@ public class Configuration {
             }
 
             ce.setValue(val);
+
+
         }
 
         if(missingParams.size() > 0) {
             this.errorMessage = "Missing configurations:\n" + String.join(" |\n", missingParams);
         }
-    }
+    }*/
 
     public static void assertComplete(){ conf._assertComplete(); }
 
     private void _assertComplete(){
-        if(this.errorMessage != null){
+
+        List<String> missingParams = new ArrayList<>();
+
+        for (ConfigurationEntry ce : confMap.values()){
+
+            String parName = ce.getCommandLineOption().getOpt();
+            if(HELP.equals(parName) || VERSION.equals(parName))
+                continue;
+
+            String val = resolveValue(ce);
+
+            if(val == null) {
+                String errMsg = MessageFormat.format(
+                        "Either set param -{0} on commandline, or define env variable {1}",
+                        ce.getCommandLineOption().getOpt(),
+                        ce.getEnvVariableName());
+
+                missingParams.add(errMsg);
+            }
+        }
+
+        if(missingParams.size() > 0) {
             Options opt = optionsFromConfMap();
             showHelp(opt);
 
-            throw new TrafoException(errorMessage);
+            String errMsg = "Missing configurations:\n" + String.join(" |\n", missingParams);
+            throw new TrafoException(errMsg);
         }
     }
-
+/*
     private String getConfigValue(String paramName){
 
         ConfigurationEntry entry = confMap.get(paramName);
+
+        String val = entry.getValue();
+
+
+
         return entry.getValue();
+    }
+
+ */
+
+    private static String resolveValue(ConfigurationEntry confEntry){
+
+        String key = confEntry.getCommandLineOption().getOpt();
+        String val = confEntry.getValue();
+
+        if(val != null && val.length() > 0) // --> hit from value cache in ConfigurationEntry
+            return val;
+
+        String defValue = null;
+        if(LOG_LEVEL.equals(key))
+            defValue = "info";
+
+        val = confEntry.getCommandLineValue();
+
+        if(val != null && val.length() > 0) {
+            log.info("Using param value from commandline for -{}", key);
+        }
+        else {
+            String envVarName = confEntry.getEnvVariableName();
+            val = System.getenv(envVarName);
+
+            if (val != null && val.length() > 0) {
+                log.info("Using param value from env variable {} for -{}", envVarName, key);
+            }
+            else if (defValue != null){
+                log.info("Falling back to default value {} for -{}", defValue, key);
+                val = defValue;
+            }
+        }
+
+        confEntry.setValue(val);
+
+        return val;
     }
 
     public static boolean helpPrinted(){

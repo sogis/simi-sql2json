@@ -1,5 +1,6 @@
 package ch.so.agi.sql2json;
 
+import ch.so.agi.sql2json.exception.TrafoException;
 import ch.so.agi.sql2json.log.Logging;
 import ch.so.agi.sql2json.routing.TemplateWalker;
 
@@ -12,7 +13,7 @@ public class Application {
 
     private static Logger log = LogManager.getLogger(Application.class);
 
-    private static Configuration conf = null;
+    //private static Configuration conf = null;
 
     public static void main(String[] args){
 
@@ -22,28 +23,42 @@ public class Application {
             if(Configuration.helpPrinted())
                 return;
 
-            Configuration.assertComplete();
-
             String level = Configuration.valueForKey(Configuration.LOG_LEVEL);
             Logging.initToLogLevel(level);
 
-            String template = "{\"tableInfo\":{\"schemaName\":\"tiger\",\"description\":\"empty\",\"layers\":{\"$trafo:fuu\": \"bar\"},\"tvName\":\"county\"}}";
-            OutputStream output = new ByteArrayOutputStream();
+            Configuration.assertComplete();
+
+            String template = loadTemplate(Configuration.valueForKey(Configuration.TEMPLATE_PATH));
+
+            String outPutPath = Configuration.valueForKey(Configuration.OUTPUT_PATH);
+            OutputStream output = new FileOutputStream(outPutPath);
 
             try {
                 TemplateWalker.walkTemplate(template, output);
+                log.info("Output json written to {}", outPutPath);
             }
             finally {
                 output.close();
             }
-
-            log.info(output.toString());
         }
         catch (Exception e){
             log.error("Exception occured. Exiting...", e);
         }
     }
 
+    public static String loadTemplate(String path){
 
-    public static Configuration conf(){return conf;}
+        String json = null;
+        try (FileInputStream fis = new FileInputStream(path)) {
+            byte[] data = fis.readAllBytes();
+            json = new String(data);
+        }
+        catch(Exception e){
+            throw new TrafoException(e);
+        }
+        return json;
+    }
+
+
+    //public static Configuration conf(){return conf;}
 }

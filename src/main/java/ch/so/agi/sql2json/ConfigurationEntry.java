@@ -5,6 +5,7 @@ import org.apache.commons.cli.Option;
 public class ConfigurationEntry {
     private Option commandLineOption;
     private String envVariableName;
+    private String commandLineValue;
     private String value;
 
     public Option getCommandLineOption() {
@@ -21,6 +22,14 @@ public class ConfigurationEntry {
 
     public void setEnvVariableName(String envVariableName) {
         this.envVariableName = envVariableName;
+    }
+
+    public String getCommandLineValue() {
+        return commandLineValue;
+    }
+
+    public void setCommandLineValue(String commandLineValue) {
+        this.commandLineValue = commandLineValue;
     }
 
     public String getValue() {

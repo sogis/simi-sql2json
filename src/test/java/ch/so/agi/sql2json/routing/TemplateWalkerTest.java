@@ -1,5 +1,6 @@
 package ch.so.agi.sql2json.routing;
 
+import ch.so.agi.sql2json.Application;
 import ch.so.agi.sql2json.Configuration;
 import ch.so.agi.sql2json.exception.AggregateException;
 import ch.so.agi.sql2json.exception.ExType;
@@ -29,7 +30,8 @@ public class TemplateWalkerTest {
 
     private static final int TEMPLATE_IDX = 1;
     private static final String[] CONFIG_TEMPLATE = {
-      "-t", "fuu",
+      "-t", "will-be-replaced",
+      "-o", "dummy",
       "-c", "jdbc:postgresql://localhost/postgres",
       "-u", "postgres",
       "-p", "postgres",
@@ -291,18 +293,12 @@ public class TemplateWalkerTest {
         return new String(outStream.toByteArray());
     }
 
+
     private static String loadTestJson(){
 
         String path = Configuration.valueForKey(Configuration.TEMPLATE_PATH);
+        String json = Application.loadTemplate(path);
 
-        String json = null;
-        try (FileInputStream fis = new FileInputStream(path)) {
-            byte[] data = fis.readAllBytes();
-            json = new String(data);
-        }
-        catch(Exception e){
-            throw new TrafoException(e);
-        }
         return json;
     }
 
@@ -319,6 +315,7 @@ public class TemplateWalkerTest {
         args[TEMPLATE_IDX] = p.toAbsolutePath().toString();
 
         Configuration.createConfig4Args(args);
+        Configuration.assertComplete();
     }
 
 
