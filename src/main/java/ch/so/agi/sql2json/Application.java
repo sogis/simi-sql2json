@@ -15,7 +15,7 @@ public class Application {
 
     //private static Configuration conf = null;
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws Exception {
 
         try {
             Configuration.createConfig4Args(args);
@@ -43,6 +43,7 @@ public class Application {
         }
         catch (Exception e){
             log.error("Exception occured. Exiting...", e);
+            throw e;
         }
     }
 

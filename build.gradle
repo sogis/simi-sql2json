@@ -39,7 +39,17 @@ jar {
     }
 
     from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }0
+    }
+}
+
+task stage(type: Copy) {
+    from file("$buildDir/libs/")
+    into file("$buildDir")
+    include "sql2json*.jar"
+
+    rename { String filename ->
+        return "sql2json.jar"
     }
 }
 

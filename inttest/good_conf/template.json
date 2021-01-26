@@ -1,0 +1,13 @@
+[{
+  "ch.so.agi.gemeindegrenzen": "Gemeindegrenzen"
+}, {
+  "$trafo:list": "list.sql"
+},
+  {
+    "$trafo:set": "set.sql"
+  }, {
+  "key": {
+    "$trafo:elem": "elem.sql"
+  }
+}, "§last_element§"
+]
