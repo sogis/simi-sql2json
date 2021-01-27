@@ -3,8 +3,8 @@ package ch.so.agi.sql2json.routing;
 import ch.so.agi.sql2json.exception.TrafoException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.io.StringReader;
 
@@ -15,7 +15,7 @@ import java.io.StringReader;
  */
 public class ObjectElementBuffer {
 
-    private static Logger log = LogManager.getLogger(ObjectElementBuffer.class);
+    private static Logger log = LoggerFactory.getLogger(ObjectElementBuffer.class);
 
     private JsonGenerator gen;
 

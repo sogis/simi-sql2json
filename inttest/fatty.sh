@@ -1,6 +1,6 @@
-# Executes the jar with a bad config and asserts that the output is written and the java exit value is <> 0
+#!/bin/bash
 
-java -jar ../build/sql2json.jar \
+java -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -jar ../build/sql2json.jar \
   -c jdbc:postgresql://localhost/postgres \
   -u postgres \
   -p postgres \

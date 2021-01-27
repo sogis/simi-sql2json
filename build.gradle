@@ -14,8 +14,7 @@ repositories {
 dependencies {
     compile 'commons-cli:commons-cli:1.4'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.1'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.0'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.0'
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.3'
@@ -39,11 +38,11 @@ jar {
     }
 
     from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }0
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
 
-task stage(type: Copy) {
+task stage(type: Copy, dependsOn: build) {
     from file("$buildDir/libs/")
     into file("$buildDir")
     include "sql2json*.jar"

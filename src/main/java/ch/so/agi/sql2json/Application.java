@@ -1,17 +1,16 @@
 package ch.so.agi.sql2json;
 
 import ch.so.agi.sql2json.exception.TrafoException;
-import ch.so.agi.sql2json.log.Logging;
 import ch.so.agi.sql2json.routing.TemplateWalker;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.io.*;
 
 public class Application {
 
-    private static Logger log = LogManager.getLogger(Application.class);
+    private static Logger log = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) throws Exception {
 
@@ -20,9 +19,6 @@ public class Application {
 
             if(Configuration.helpPrinted())
                 return;
-
-            String level = Configuration.valueForKey(Configuration.LOG_LEVEL);
-            Logging.initToLogLevel(level);
 
             Configuration.assertComplete();
 

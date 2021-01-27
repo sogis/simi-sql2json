@@ -2,8 +2,8 @@ package ch.so.agi.sql2json.tag;
 
 import ch.so.agi.sql2json.exception.TrafoException;
 import com.fasterxml.jackson.core.JsonGenerator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ public class BaseTag {
 
     public static final String MARKER_VALUE = "$BaseTag$";
 
-    private static Logger log = LogManager.getLogger(BaseTag.class);
+    private static Logger log = LoggerFactory.getLogger(BaseTag.class);
 
     protected static final String TEMPLATE_PREFIX = "$trafo:";
     private static final String TEMPLATE_SUFFIX = "base";

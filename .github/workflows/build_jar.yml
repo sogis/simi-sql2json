@@ -1,0 +1,41 @@
+name: Simi sql2json - Build executable fat jar sql2json.jar
+
+on:
+  push:
+    branches: master
+
+jobs:
+  buildImage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Start db image for unit and integration tests
+        run: docker-compose up -d -V db
+        working-directory: ./testdb
+      - name: Wait until db is up
+        run: docker-compose up -V --exit-code-from await-db await-db
+        working-directory: ./testdb
+      - name: Build unit-tested jar with gradle
+        run: ./gradlew stage
+      - name: Print version info
+        run: print_version.sh
+        working-directory: ./inttest
+      - name: Test with good configuration
+        run: ok_exit.sh
+        working-directory: ./inttest
+      - name: Test with env variables
+        run: env_ok.sh
+        working-directory: ./inttest
+      - name: Test with bad configuration
+        run: err_exit.sh
+        working-directory: ./inttest
+      - name: Test with bad configuration
+        run: err_exit.sh
+        working-directory: ./inttest
+      - name: Test with big resultset
+        run: fatty.sh
+        working-directory: ./inttest

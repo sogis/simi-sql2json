@@ -4,8 +4,8 @@ import ch.so.agi.sql2json.exception.TrafoException;
 import ch.so.agi.sql2json.tag.BaseTag;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 /**
  * Routes the JsonElements to the writer or to the corresponding sql-tag
@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class JsonElementRouter {
 
-    private static Logger log = LogManager.getLogger(JsonElementRouter.class);
+    private static Logger log = LoggerFactory.getLogger(JsonElementRouter.class);
 
     private JsonGenerator gen;
     private ObjectElementBuffer buf;

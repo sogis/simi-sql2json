@@ -2,8 +2,8 @@ package ch.so.agi.sql2json;
 
 import ch.so.agi.sql2json.exception.TrafoException;
 import org.apache.commons.cli.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -17,11 +17,10 @@ public class Configuration {
     public static final String DB_CONNECTION = "c";
     public static final String DB_USER = "u";
     public static final String DB_PASSWORD = "p";
-    public static final String LOG_LEVEL = "l";
     private static final String HELP = "h";
     private static final String VERSION = "v";
 
-    private static Logger log = LogManager.getLogger(Configuration.class);
+    private static Logger log = LoggerFactory.getLogger(Configuration.class);
 
     private static Configuration conf;
 
@@ -100,7 +99,6 @@ public class Configuration {
         addEntry(DB_CONNECTION, "SqlTrafo_DbConnection", "JDBC Connection-URL zur abzufragenden DB. Aufbau: jdbc:postgresql://host:port/database");
         addEntry(DB_USER, "SqlTrafo_DbUser", "Benutzername für die DB-Verbindung");
         addEntry(DB_PASSWORD, "SqlTrafo_DbPassword", "Passwort für die DB-Verbindung");
-        addEntry(LOG_LEVEL, "SqlTrafo_LogLevel", "Logging-Level: debug, info, warn oder error. Default: info");
 
         String desc = "Ausgabe von Version und Hilfetext zum Commandline-Tool sql2json";
         addEntry(HELP, null, desc);
@@ -166,10 +164,6 @@ public class Configuration {
         if(val != null && val.length() > 0) // --> hit from value cache in ConfigurationEntry
             return val;
 
-        String defValue = null;
-        if(LOG_LEVEL.equals(key))
-            defValue = "info";
-
         val = confEntry.getCommandLineValue();
 
         if(val != null && val.length() > 0) {
@@ -181,10 +175,6 @@ public class Configuration {
 
             if (val != null && val.length() > 0) {
                 log.info("Using param value from env variable {} for -{}", envVarName, key);
-            }
-            else if (defValue != null){
-                log.info("Falling back to default value {} for -{}", defValue, key);
-                val = defValue;
             }
         }
 

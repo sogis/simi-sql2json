@@ -10,6 +10,7 @@ import ch.so.agi.sql2json.tag.JsonType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -18,11 +19,6 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-    /*
-    Integration Tests:
-    - memory footprint --> use jvm params to limit memory
-    - Return values for sunny and error execution
-     */
 
 public class TemplateWalkerTest {
 
@@ -35,11 +31,14 @@ public class TemplateWalkerTest {
       "-c", "jdbc:postgresql://localhost/postgres",
       "-u", "postgres",
       "-p", "postgres",
-      "-l", "debug"
     };
 
     private static final String LIST_MARKER = "§list_ok§";
     private static final String SET_MARKER = "§set_ok§";
+
+    static {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel","info");
+    }
 
     @Test
     void withoutTag_Identical_OK() throws Exception {

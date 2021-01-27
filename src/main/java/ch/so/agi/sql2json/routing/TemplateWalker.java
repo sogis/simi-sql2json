@@ -6,8 +6,8 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class TemplateWalker {
 
-    private static Logger log = LogManager.getLogger(TemplateWalker.class);
+    private static Logger log = LoggerFactory.getLogger(TemplateWalker.class);
 
     private static ArrayList<TrafoException> tagExceptions = null;
 
