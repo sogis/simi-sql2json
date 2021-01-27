@@ -23,11 +23,13 @@ jobs:
       - name: Wait until db is up
         run: docker-compose up -V --exit-code-from await-db await-db
         working-directory: ./testdb
+
       - name: Build unit-tested jar with gradle
         run: ./gradlew stage
       - name: Print version info
         run: print_version.sh
         working-directory: ./inttest
+
       - name: Test with good configuration
         run: ok_exit.sh
         working-directory: ./inttest
