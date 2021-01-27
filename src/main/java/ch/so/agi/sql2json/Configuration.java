@@ -2,10 +2,8 @@ package ch.so.agi.sql2json;
 
 import ch.so.agi.sql2json.exception.TrafoException;
 import org.apache.commons.cli.*;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.Configurator;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -28,7 +26,6 @@ public class Configuration {
     private static Configuration conf;
 
     private HashMap<String, ConfigurationEntry> confMap;
-    private String errorMessage;
     private boolean helpPrinted;
 
     public static void createConfig4Args(String[] args){
@@ -64,35 +61,6 @@ public class Configuration {
         }
 
         setCommandLineValues(para);
-
-        //create the Options
-
-        //create the configMap with commandLineValue (if present)
-
-        /*
-        //Configurator.setRootLevel(Level.INFO);
-
-        createConfigMap();
-
-        Options opt = optionsFromConfMap();
-
-        CommandLineParser parser = new DefaultParser();
-        CommandLine para = null;
-
-        try {
-            para = parser.parse(opt, args);
-        } catch (ParseException e) {
-            log.error("Error parsing commandline params", e);
-        }
-
-        if(para.hasOption(HELP) || para.hasOption(VERSION)){
-            showHelp(opt);
-            return;
-        }
-
-        //setConfigValues(para);
-        */
-
     }
 
     private void showHelp(Options opt){
@@ -157,67 +125,6 @@ public class Configuration {
         }
     }
 
-     /*
-    private void setConfigValues(CommandLine para){
-
-        List<String> missingParams = new ArrayList<>();
-
-        for (ConfigurationEntry ce : confMap.values()){
-
-            String val = resolveValue(ce);
-
-            if(val == null) {
-
-                String errMsg = MessageFormat.format(
-                        "Either set param -{0} on commandline, or define env variable {1}",
-                        ce.getCommandLineOption().getOpt(),
-                        ce.getEnvVariableName());
-
-                missingParams.add(errMsg);
-            }
-
-
-
-            if(ce.getEnvVariableName() == null) //skip for help, version options
-                continue;
-
-            String key = ce.getCommandLineOption().getOpt();
-            String val = para.getOptionValue(key);
-
-            if (val != null && val.length() > 0){
-                log.info("Using param value from commandline for -{}", key);
-            }
-            else{
-                String envVarName = ce.getEnvVariableName();
-                val = System.getenv(envVarName);
-
-                if (val != null && val.length() > 0) {
-                    log.info("Using param value from env variable {} for -{}", envVarName, key);
-                }
-                else if (LOG_LEVEL.equals(ce.getCommandLineOption())){
-                    ce.setValue("INFO");
-                    log.info("Loglevel not specified. Defaulting to info");
-                }
-                else {
-                    String errMsg = MessageFormat.format(
-                            "Either set param -{0} on commandline, or define env variable {1}",
-                            key,
-                            envVarName);
-
-                    missingParams.add(errMsg);
-                }
-            }
-
-            ce.setValue(val);
-
-
-        }
-
-        if(missingParams.size() > 0) {
-            this.errorMessage = "Missing configurations:\n" + String.join(" |\n", missingParams);
-        }
-    }*/
-
     public static void assertComplete(){ conf._assertComplete(); }
 
     private void _assertComplete(){
@@ -250,19 +157,6 @@ public class Configuration {
             throw new TrafoException(errMsg);
         }
     }
-/*
-    private String getConfigValue(String paramName){
-
-        ConfigurationEntry entry = confMap.get(paramName);
-
-        String val = entry.getValue();
-
-
-
-        return entry.getValue();
-    }
-
- */
 
     private static String resolveValue(ConfigurationEntry confEntry){
 

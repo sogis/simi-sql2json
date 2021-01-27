@@ -13,8 +13,6 @@ public class Application {
 
     private static Logger log = LogManager.getLogger(Application.class);
 
-    //private static Configuration conf = null;
-
     public static void main(String[] args) throws Exception {
 
         try {
@@ -59,7 +57,4 @@ public class Application {
         }
         return json;
     }
-
-
-    //public static Configuration conf(){return conf;}
 }

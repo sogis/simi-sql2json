@@ -5,20 +5,20 @@ java -jar ../build/sql2json.jar \
   -u postgres \
   -p postgres \
   -l info \
-  -t $(pwd)/bad_conf/template.json \
-  -o $(pwd)/bad_conf/.result.json
+  -t $(pwd)/good_conf/template.json \
+  -o $(pwd)/good_conf/.result.json
 
 jarexit=$?
 
-grep §last_element§ bad_conf/.result.json
+grep §last_element§ good_conf/.result.json
 
 grepexit=$?
 
-if [ $jarexit -eq 0 -o $grepexit -ne 0 ]; then # Test fails if sql2json.jar exits with ok value
-  echo err_exit test failed
+if [ $jarexit -ne 0 -o $grepexit -ne 0 ]; then
+  echo ok_exit test failed
   exit 1
 else
-  echo err_exit test passed
+  echo ok_exit test passed
   exit 0
 fi
 
