@@ -6,11 +6,11 @@ java -jar ../build/sql2json.jar \
   -p postgres \
   -l info \
   -t $(pwd)/fat_boy/template.json \
-  -o $(pwd)/fat_boy/.result.json
+  -o $(pwd)/fat_boy/_result.json
 
 jarexit=$?
 
-grep -l §last_element§ fat_boy/.result.json
+grep -l §last_element§ fat_boy/_result.json
 
 grepexit=$?
 

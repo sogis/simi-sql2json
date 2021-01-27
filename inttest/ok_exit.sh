@@ -6,11 +6,11 @@ java -jar ../build/sql2json.jar \
   -p postgres \
   -l info \
   -t $(pwd)/good_conf/template.json \
-  -o $(pwd)/good_conf/.result.json
+  -o $(pwd)/good_conf/_result.json
 
 jarexit=$?
 
-grep §last_element§ good_conf/.result.json
+grep -l §last_element§ good_conf/_result.json
 
 grepexit=$?
 
