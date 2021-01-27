@@ -23,7 +23,7 @@ Die Konfiguration des Trafo erfolgt mittels Kommandozeilenparameter und/oder Umg
 |DB-Password|-p|SqlTrafo_DbPassword|Passwort für die DB-Verbindung|
 
 Siehe die Integrationstests als Beispiele:
-* [ok_exit.sh](inttest/ok_exit.sh): Aufruf via Kommandozeilen-Parameter
+* [exit_ok.sh](inttest/exit_ok.sh): Aufruf via Kommandozeilen-Parameter
 * [env_ok.sh](inttest/env_ok.sh): Aufruf via Umgebungs-Variablen
 
 ### Logging
@@ -77,20 +77,7 @@ Das Trafo-Tag ist ein Json-Objekt, dessen Name mit "$trafo:" beginnt: `{"$trafo:
   * Der Name in den Paaren ist ein String.
   * Die Werte in den Paaren können wiederum Primitivwerte, Objekte oder Listen sein.
 
-### Beispiele
-
-**Datei mit SQL-Query**
-
-Das für das Tag auszuführende Query wird im Trafo-Tag als String-Pfad übergeben. Der Pfad wird relativ
-zum Template-Pfad aufgelöst, damit die Sql-Dateien auch in einem Unterverzeichnissen geordnet werden können.
-
-Beispiel:
-* Template befindet sich in opt/user/trafo/wms/template.json
-* Sql befindet sich in opt/user/trafo/wms/sql/object.sql
-
---> Angabe der SQL-Datei im Trafo-Tag mittels "sql/object.sql"  
-
-### Tag-Konfiguration für die Rückgabe eines Json-Elementes `{"$trafo:elem": "element.sql"}`
+### Beispiel für Trafo-Tag `{"$trafo:elem": "..."}`
 
 **Template-Ausschnitt**
 
@@ -124,7 +111,7 @@ Der Trafo verwendet die erste zurückgegebene Spalte des Resultsets.
 }
 ```
 
-### Tag-Konfiguration für die Rückgabe einer Liste `{"$trafo:list": "objectlist.sql"}`
+### Beispiel für Trafo-Tag `{"$trafo:list": "..."}`
 
 **Template-Ausschnitt**
 
@@ -165,7 +152,7 @@ Verhalten bezüglich der Spaltentypen identisch wie bei `{"$trafo:elem": "..."}`
 }
 ```
 
-### Tag-Konfiguration für die Rückgabe eines "Objekt-Sets"
+### Beispiel für Trafo-Tag `{"$trafo:set": "..."}`
 
 **Template-Ausschnitt**
 
