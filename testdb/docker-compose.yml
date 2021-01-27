@@ -6,6 +6,8 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
   await-db:
     image: postgis/postgis:11-2.5-alpine
     command: /var/lib/postgresql/data/await-db/await.sh
