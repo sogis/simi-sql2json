@@ -31,17 +31,14 @@ jobs:
         working-directory: ./inttest
 
       - name: Test with good configuration
-        run: ./ok_exit.sh
+        run: ./exit_ok.sh
         working-directory: ./inttest
       - name: Test with env variables
         run: ./env_ok.sh
         working-directory: ./inttest
       - name: Test with bad configuration
-        run: ./err_exit.sh
+        run: ./exit_err.sh
         working-directory: ./inttest
-      - name: Test with bad configuration
-        run: ./err_exit.sh
-        working-directory: ./inttest
-      - name: Test with big resultset
-        run: ./fatty.sh
+      - name: Test with biig resultset
+        run: ./fatty_ok.sh
         working-directory: ./inttest
