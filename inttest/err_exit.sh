@@ -5,7 +5,6 @@ java -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -jar ../build/sql2json.jar \
   -c jdbc:postgresql://localhost/postgres \
   -u postgres \
   -p postgres \
-  -l info \
   -t $(pwd)/bad_conf/template.json \
   -o $(pwd)/bad_conf/_result.json
 

@@ -3,5 +3,3 @@
 java -jar ../build/sql2json.jar -v
 
 exit $?
-
-
