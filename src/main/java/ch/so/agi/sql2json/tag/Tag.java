@@ -8,21 +8,21 @@ import org.slf4j.Logger;
 import java.text.MessageFormat;
 import java.util.HashMap;
 
-public class BaseTag {
+public class Tag {
 
     public static final String MARKER_VALUE = "$BaseTag$";
 
-    private static Logger log = LoggerFactory.getLogger(BaseTag.class);
+    private static Logger log = LoggerFactory.getLogger(Tag.class);
 
     protected static final String TEMPLATE_PREFIX = "$trafo:";
     private static final String TEMPLATE_SUFFIX = "base";
 
-    private static HashMap<String, BaseTag> templates = null;
+    private static HashMap<String, Tag> templates = null;
 
     static {
         templates = new HashMap<>();
 
-        BaseTag base = new BaseTag();
+        Tag base = new Tag();
         templates.put(base.fullTagName(), base);
 
         ListTag arr = new ListTag();
@@ -35,8 +35,8 @@ public class BaseTag {
         templates.put(elem.fullTagName(), elem);
     }
 
-    public static BaseTag forName(String name){
-        BaseTag t = templates.getOrDefault(name, null);
+    public static Tag forName(String name){
+        Tag t = templates.getOrDefault(name, null);
 
         if(t == null && name.startsWith(TEMPLATE_PREFIX))
             log.warn("Property '{}' seems to point to template tag, but no matching tag was found.");

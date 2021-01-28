@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import java.sql.*;
 import java.util.Properties;
 
-public class ListTag extends BaseTag {
+public class ListTag extends Tag {
 
     private static Logger log = LoggerFactory.getLogger(ListTag.class);
     private static final String TEMPLATE_SUFFIX = "list";

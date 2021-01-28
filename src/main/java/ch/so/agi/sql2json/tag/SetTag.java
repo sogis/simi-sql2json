@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import java.sql.*;
 import java.util.Properties;
 
-public class SetTag extends BaseTag {
+public class SetTag extends Tag {
 
     private static Logger log = LoggerFactory.getLogger(SetTag.class);
     private static final String TEMPLATE_SUFFIX = "set";

@@ -1,7 +1,7 @@
 package ch.so.agi.sql2json.routing;
 
 import ch.so.agi.sql2json.exception.TrafoException;
-import ch.so.agi.sql2json.tag.BaseTag;
+import ch.so.agi.sql2json.tag.Tag;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ public class JsonElementRouter {
 
         boolean candidateIsTemplate = false;
         if (buf.isComplete()) {
-            BaseTag t = BaseTag.forName(buf.getName());
+            Tag t = Tag.forName(buf.getName());
             if (t != null){
                 try {
                     candidateIsTemplate = true;

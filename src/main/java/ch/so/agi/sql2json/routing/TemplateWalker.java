@@ -11,8 +11,6 @@ import org.slf4j.Logger;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Traverses the json template and passes the json elements to the router for processing.

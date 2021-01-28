@@ -36,7 +36,7 @@ public class Application {
             }
         }
         catch (Exception e){
-            log.error("Exception occured. Exiting...", e);
+            log.error("Exception occured. Exiting...");
             throw e;
         }
     }

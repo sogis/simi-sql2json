@@ -30,6 +30,9 @@ jobs:
         run: ./print_version.sh
         working-directory: ./inttest
 
+      - name: Test with missing parameters
+        run: ./missing_params.sh
+        working-directory: ./inttest
       - name: Test with good configuration
         run: ./exit_ok.sh
         working-directory: ./inttest

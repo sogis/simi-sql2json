@@ -5,12 +5,11 @@ import ch.so.agi.sql2json.Configuration;
 import ch.so.agi.sql2json.exception.AggregateException;
 import ch.so.agi.sql2json.exception.ExType;
 import ch.so.agi.sql2json.exception.TrafoException;
-import ch.so.agi.sql2json.tag.BaseTag;
+import ch.so.agi.sql2json.tag.Tag;
 import ch.so.agi.sql2json.tag.JsonType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -84,7 +83,7 @@ public class TemplateWalkerTest {
     void withTag_Replacing_OK() throws Exception {
 
         initConfigForTest();
-        execAndValidate(BaseTag.MARKER_VALUE);
+        execAndValidate(Tag.MARKER_VALUE);
     }
 
     @Test

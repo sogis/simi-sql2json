@@ -4,6 +4,11 @@ Der sql2json Transformator (Trafo) arbeitet pro Programmaufruf ein Json-Template
 Trafo-Tags ab. Für jedes Trafo-Tag setzt der Trafo ein Sql-Statement auf die Metadatenbank ab und 
 ersetzt das Trafo-Tag mit dem Ergebnis des SQL-Queries.
 
+## Dokumentationen
+
+In den folgenden Kapiteln ist die Konfiguration und Benutzung des Trafo beschrieben. Die Entwicklerdoku ist
+[hier](DevDok.md) zuhause.
+
 ## Downloaden und starten
 
 Der Trafo ist ein ein executable fat jar, dessen Releases hier ($td download) abgelegt sind.
@@ -12,7 +17,8 @@ Befehl zur Ausgabe der Hilfe:
 ```shell script
 java -jar sql2json.jar -h
 ```
-Die Konfiguration des Trafo erfolgt mittels Kommandozeilenparameter und/oder Umgebungsvariable:
+Die Konfiguration des Trafo erfolgt mittels Kommandozeilenparameter und/oder Umgebungsvariable. Bei Variablen, welche 
+sowohl auf Kommandozeile wie in Umgebungsvariable definiert sind, wird der Wert der Kommandozeile verwendet.
 
 |Bezeichnung|Parameter|Umgebungsvariable|Bemerkung|
 |---|---|---|---|
@@ -30,7 +36,7 @@ Siehe die Integrationstests als Beispiele:
 
 Trafo nutzt die Bibliothek slf4j-simple. Loglevel und Ausgabeformat können mittels Java-Variablen gesetzt werden.
 
-Beispiel:
+Setzen des Log-Levels:
 
 ```shell script
 java -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -jar sql2json.jar
@@ -58,7 +64,7 @@ java -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -jar sql2json.jar \
 
 Für jedes Trafo-Tag, welches der Trafo im Json-Template antrifft, werden die folgenden Schritte durchgeführt. Der Trafo:
 * setzt das im Trafo-Tag referenzierte SQL-Query auf die Datenbank ab. Der Pfad zur Query-Datei wird relativ
-zum Template-Pfad aufgelöst, damit die Sql-Dateien auch in einem Unterverzeichnissen geordnet werden können.
+zum Template-Pfad aufgelöst, damit die Sql-Dateien auch in Unterverzeichnissen geordnet werden können.
 * verarbeitet das SQL Resultset in ein Json-Element.
 * ersetzt im Output.json das Trafo-Tag mit dem Json-Element.
 
@@ -69,8 +75,8 @@ Das Trafo-Tag ist ein Json-Objekt, dessen Name mit "$trafo:" beginnt: `{"$trafo:
 **Typen:**
 * **"$trafo:elem":** Rendert ein einzelnes Json-Element in das Output-Json. Typen von Json-Elementen:
   * "Primitive" Werte (String, Number, Boolean, Null)
-  * Liste von Elementen: `[]`
-  * Objekt: `{}`
+  * Liste von Elementen: `[...]`
+  * Objekt: `{...}`
 * **"$trafo:list":** Rendert eine Liste von Json-Elementen in das Output-Json.
   * Die Elemente der Liste können wiederum Primitivwerte, Objekte oder Listen sein.
 * **"$trafo:set":** Rendert ein Objekt mit Name-Wert-Paaren in das Output-Json.
@@ -199,8 +205,8 @@ Der Trafo verwendet die ersten beiden zurückgegebenen Spalten des Resultsets.
 
 ### Korrekte Komplettkonfigurationen
 
-Siehe die Shellskripte *_ok.sh mit referenzierten Templates und Queries als korrekt ablaufende Konfigurationsbeispiele.
-In Ordner \[Repo-Root\]/inttest.
+Die Integrationstests sind gute erläuternde Komplettkonfigurationen (mit Template, Trafo-Tag, Sql-Datei). 
+Siehe die auf _ok.sh endenden Integrationstests in Ordner \[Repo-Root\]/inttest.
 
 ### Fehlerbehandlung
 
