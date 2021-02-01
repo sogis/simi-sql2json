@@ -59,7 +59,7 @@ bintray {
 
     pkg {
         repo = 'simi'
-        name = 'sql2json_dev'
+        name = 'sql2json'
         userOrg = 'sogis'
         licenses = ['MIT']
         labels = ['simi', 'sql2json', 'sql', 'template', 'json']
