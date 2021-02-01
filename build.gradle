@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'ch.so.agi'
-version '0.1.' + getBuildNumber()
+version '1.0.' + getBuildNumber()
 sourceCompatibility = 11
 
 repositories {
