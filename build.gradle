@@ -52,14 +52,14 @@ publishing {
 }
 
 bintray {
-    user = project["sql2json.publish.user"]
-    key = project["sql2json.publish.pass"]
+    user = findProperty("sql2json.publish.user")
+    key = findProperty("sql2json.publish.pass")
     publications = ['mavenPublication']
     publish = true
 
     pkg {
         repo = 'simi'
-        name = 'sql2json'
+        name = 'sql2json_dev'
         userOrg = 'sogis'
         licenses = ['MIT']
         labels = ['simi', 'sql2json', 'sql', 'template', 'json']
