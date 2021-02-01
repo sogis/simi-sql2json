@@ -1,10 +1,11 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id "com.jfrog.bintray" version "1.8.4"
 }
 
 group 'ch.so.agi'
-version '1.0.' + getBuildNumber()
+version '0.1.' + getBuildNumber()
 sourceCompatibility = 11
 
 repositories {
@@ -30,7 +31,7 @@ jar {
         attributes (
                 "Main-Class": "ch.so.agi.sql2json.Application",
                 "Implementation-Title": "sql2json",
-                "Implementation-Version": version + " (Benötigt Java 11)",
+                "Implementation-Version": project.version + " (Benötigt Java 11)",
                 "Implementation-Vendor": "Amt für Geoinformation, Kt. Solothurn",
                 "Build-Timestamp": getTimestamp(),
                 "Build-Git-Commit": getCheckedOutGitCommitHash()
@@ -39,6 +40,34 @@ jar {
 
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+publishing {
+    publications {
+        mavenPublication(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+bintray {
+    user = project["sql2json.publish.user"]
+    key = project["sql2json.publish.pass"]
+    publications = ['mavenPublication']
+    publish = true
+
+    pkg {
+        repo = 'simi'
+        name = 'sql2json'
+        userOrg = 'sogis'
+        licenses = ['MIT']
+        labels = ['simi', 'sql2json', 'sql', 'template', 'json']
+        version {
+            name = project.version
+            desc = project.version
+            released  = new Date()
+        }
     }
 }
 

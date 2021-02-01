@@ -45,3 +45,6 @@ jobs:
       - name: Test with biig resultset
         run: ./fatty_ok.sh
         working-directory: ./inttest
+
+      - name: Upload verified jar to bintray
+        run: ./gradlew bintrayUpload -Psql2json.publish.user=${{ secrets.BINTRAY_USER }} -Psql2json.publish.pass=${{ secrets.BINTRAY_PASS }}
