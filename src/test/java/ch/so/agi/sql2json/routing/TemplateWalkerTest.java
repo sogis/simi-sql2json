@@ -194,6 +194,13 @@ public class TemplateWalkerTest {
     }
 
     @Test
+    void elem_OfStringWithSpecialChars_OK() throws Exception {
+
+        initConfigForTest();
+        execAndCheckValueType("§ident§", JsonType.STRING);
+    }
+
+    @Test
     void mixedTags_WithErrors_WritesToEnd() throws Exception {
 
         initConfigForTest();
@@ -242,23 +249,27 @@ public class TemplateWalkerTest {
 
             if(valueType == null) { // for json null...
                 if(!inner.isNull())
-                    throw new TrafoException("Expected 'null' as value for key '{0}'", jsonObjectKey);
-            }
-            else if(valueType == JsonType.NUMBER){
-                if(!inner.isInt())
-                    throw new TrafoException("Expected integer as value for key '{0}'", jsonObjectKey);
-            }
-            else if(valueType == JsonType.BOOLEAN){
-                if(!inner.isBoolean())
-                    throw new TrafoException("Expected boolean as value for key '{0}'", jsonObjectKey);
+                    throw new TrafoException("Expected 'null' as value for key {0}", jsonObjectKey);
             }
             else if(valueType == JsonType.JSON_ELEMENT){
                 boolean isElem = inner.isArray() || inner.isObject();
                 if(!isElem)
-                    throw new TrafoException("Expected array or object as value for key '{0}'", jsonObjectKey);
+                    throw new TrafoException("Expected array or object as value for key {0}", jsonObjectKey);
+            }
+            else if(valueType == JsonType.STRING){
+                if(!inner.isTextual())
+                    throw new TrafoException("Expected string as value for key {0}", jsonObjectKey);
+            }
+            else if(valueType == JsonType.NUMBER){
+                if(!inner.isInt())
+                    throw new TrafoException("Expected integer as value for key {0}", jsonObjectKey);
+            }
+            else if(valueType == JsonType.BOOLEAN){
+                if(!inner.isBoolean())
+                    throw new TrafoException("Expected boolean as value for key {0}", jsonObjectKey);
             }
             else {
-                throw new TrafoException("Method execAndValidate(...) does not handle JsonType '{0}'", valueType);
+                throw new TrafoException("Method execAndCheckValueType(...) does not handle JsonType {0}", valueType);
             }
         }
         catch(Exception e){
