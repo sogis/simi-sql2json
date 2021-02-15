@@ -42,7 +42,7 @@ public class ListTag extends Tag {
             int rowCount = 0;
             while (rs.next())
             {
-                Tags.writeElement(rs,1, type, gen);
+                Tags.writeValue(rs,1, type, gen);
                 rowCount++;
             }
             rs.close();

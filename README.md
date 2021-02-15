@@ -11,7 +11,7 @@ In den folgenden Kapiteln ist die Konfiguration und Benutzung des Trafo beschrie
 
 ## Downloaden und starten
 
-Der Trafo ist ein ein executable fat jar, dessen Releases in diesem 
+Der Trafo ist ein executable fat jar, dessen Releases in diesem 
 [Bintray Maven Package](https://dl.bintray.com/sogis/simi/ch/so/agi/sql2json/) abgelegt sind.
 
 Befehl zur Ausgabe der Hilfe:

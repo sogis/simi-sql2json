@@ -52,12 +52,12 @@ public class Tags {
             throw new TrafoException(ExType.VAL_COLUMNTYPE_UNKNOWN.VAL_COLUMNTYPE_UNKNOWN,
                     "{0}: Query returns unsupported column type {1}.", fileName, meta.getColumnTypeName(colIdx));
 
-        log.debug("{}: Inferred json type {} for column type {}", fileName, res, meta.getColumnTypeName(colIdx) );
+        log.debug("{}: Inferred json type {} for column {}", fileName, res, meta.getColumnName(colIdx) );
 
         return res;
     }
 
-    static void writeElement(ResultSet rs, int colIdx, JsonType jsonType, JsonGenerator gen) throws Exception {
+    static void writeValue(ResultSet rs, int colIdx, JsonType jsonType, JsonGenerator gen) throws Exception {
 
         Object val = rs.getObject(colIdx);
         if(rs.wasNull()) {
@@ -66,7 +66,7 @@ public class Tags {
         }
 
         if(jsonType == JsonType.JSON_ELEMENT){
-            gen.writeObject(val.toString());
+            gen.writeRawValue(val.toString());
         }
         else if(jsonType == JsonType.STRING){
             gen.writeString(val.toString());

@@ -43,7 +43,7 @@ public class SetTag extends Tag {
             while (rs.next())
             {
                 gen.writeFieldName(rs.getString(1));
-                Tags.writeElement(rs, 2, type, gen);
+                Tags.writeValue(rs, 2, type, gen);
                 rowCount++;
             }
             rs.close();

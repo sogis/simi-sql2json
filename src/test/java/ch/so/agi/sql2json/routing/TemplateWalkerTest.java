@@ -10,6 +10,7 @@ import ch.so.agi.sql2json.tag.JsonType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -34,6 +35,7 @@ public class TemplateWalkerTest {
 
     private static final String LIST_MARKER = "§list_ok§";
     private static final String SET_MARKER = "§set_ok§";
+    private static final String OBJ_MARKER = "§mark§";
 
     static {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel","info");
@@ -83,35 +85,35 @@ public class TemplateWalkerTest {
     void withTag_Replacing_OK() throws Exception {
 
         initConfigForTest();
-        execAndValidate(Tag.MARKER_VALUE);
+        execAndAssertContains(Tag.MARKER_VALUE);
     }
 
     @Test
     void list_OfJsonb_OK() throws Exception {
 
         initConfigForTest();
-        execAndValidate(LIST_MARKER);
+        execAndCheckValueType(OBJ_MARKER, JsonType.JSON_ELEMENT);
     }
 
     @Test
     void list_OfJson_OK() throws Exception {
 
         initConfigForTest();
-        execAndValidate(LIST_MARKER);
+        execAndCheckValueType(OBJ_MARKER, JsonType.JSON_ELEMENT);
     }
 
     @Test
     void list_OfString_OK() throws Exception {
 
         initConfigForTest();
-        execAndValidate(LIST_MARKER);
+        execAndAssertContains(LIST_MARKER);
     }
 
     @Test
     void list_WithNullValues_OK() throws Exception {
 
         initConfigForTest();
-        execAndValidate(LIST_MARKER);
+        execAndAssertContains(LIST_MARKER);
     }
 
     @Test
@@ -132,14 +134,14 @@ public class TemplateWalkerTest {
     void set_OfJson_OK() throws Exception {
 
         initConfigForTest();
-        execAndValidate(SET_MARKER);
+        execAndCheckValueType(OBJ_MARKER, JsonType.JSON_ELEMENT);
     }
 
     @Test
     void set_OfString_OK() throws Exception {
 
         initConfigForTest();
-        execAndValidate(SET_MARKER);
+        execAndAssertContains(SET_MARKER);
     }
 
     @Test
@@ -160,35 +162,35 @@ public class TemplateWalkerTest {
     void elem_OfString_OK() throws Exception {
 
         initConfigForTest();
-        execAndValidate("§elem_ok§");
+        execAndAssertContains("§elem_ok§");
     }
 
     @Test
     void elem_OfJson_OK() throws Exception {
 
         initConfigForTest();
-        execAndValidate("§elem_ok§");
+        execAndCheckValueType(OBJ_MARKER, JsonType.JSON_ELEMENT);
     }
 
     @Test
     void elem_OfNull_OK() throws Exception {
 
         initConfigForTest();
-        execAndValidate("§ident§", null);
+        execAndCheckValueType("§ident§", null);
     }
 
     @Test
     void elem_OfNumber_OK() throws Exception {
 
         initConfigForTest();
-        execAndValidate("§ident§", JsonType.NUMBER);
+        execAndCheckValueType("§ident§", JsonType.NUMBER);
     }
 
     @Test
     void elem_OfBoolean_OK() throws Exception {
 
         initConfigForTest();
-        execAndValidate("§ident§", JsonType.BOOLEAN);
+        execAndCheckValueType("§ident§", JsonType.BOOLEAN);
     }
 
     @Test
@@ -225,7 +227,7 @@ public class TemplateWalkerTest {
         }
     }
 
-    private void execAndValidate(String jsonObjectKey, JsonType type) throws Exception{
+    private void execAndCheckValueType(String jsonObjectKey, JsonType valueType) throws Exception{
         String template = loadTestJson();
         ByteArrayOutputStream output = null;
 
@@ -235,22 +237,28 @@ public class TemplateWalkerTest {
             TemplateWalker.walkTemplate(template, output);
             String resJson = readAll(output);
 
-            JsonNode node = mapper.readTree(resJson); // the tested json object
+            JsonNode root = mapper.readTree(resJson); // the tested json object
+            JsonNode inner = root.findValue(jsonObjectKey);
 
-            if(type == null) { // for json null...
-                if(!node.findValue(jsonObjectKey).isNull())
+            if(valueType == null) { // for json null...
+                if(!inner.isNull())
                     throw new TrafoException("Expected 'null' as value for key '{0}'", jsonObjectKey);
             }
-            else if(type == JsonType.NUMBER){
-                if(!node.findValue(jsonObjectKey).isInt())
+            else if(valueType == JsonType.NUMBER){
+                if(!inner.isInt())
                     throw new TrafoException("Expected integer as value for key '{0}'", jsonObjectKey);
             }
-            else if(type == JsonType.BOOLEAN){
-                if(!node.findValue(jsonObjectKey).isBoolean())
+            else if(valueType == JsonType.BOOLEAN){
+                if(!inner.isBoolean())
                     throw new TrafoException("Expected boolean as value for key '{0}'", jsonObjectKey);
             }
+            else if(valueType == JsonType.JSON_ELEMENT){
+                boolean isElem = inner.isArray() || inner.isObject();
+                if(!isElem)
+                    throw new TrafoException("Expected array or object as value for key '{0}'", jsonObjectKey);
+            }
             else {
-                throw new TrafoException("Method execAndValidate(...) does not handle JsonType '{0}'", type);
+                throw new TrafoException("Method execAndValidate(...) does not handle JsonType '{0}'", valueType);
             }
         }
         catch(Exception e){
@@ -258,7 +266,11 @@ public class TemplateWalkerTest {
         }
     }
 
-    private void execAndValidate(String outputMarker) throws Exception{
+    private void execAndAssertContains(String outputMarker) throws Exception{
+        execAndAssertContains(outputMarker, "");
+    }
+
+    private void execAndAssertContains(String outputMarker, String pathToSetOrArray) throws Exception{
         String template = loadTestJson();
         ByteArrayOutputStream output = null;
 
@@ -315,8 +327,4 @@ public class TemplateWalkerTest {
         Configuration.createConfig4Args(args);
         Configuration.assertComplete();
     }
-
-
-
-
 }
