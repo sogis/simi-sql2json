@@ -1,0 +1,11 @@
+{
+  "resources": {
+    "wms_services": [{
+      "root_layer": {
+        "layers": {
+          "$trafo:list": "query.sql"
+        }
+      }
+    }]
+  }
+}

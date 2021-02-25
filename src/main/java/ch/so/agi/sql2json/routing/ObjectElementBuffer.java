@@ -74,6 +74,40 @@ public class ObjectElementBuffer {
         log.debug("objStartElem(). endstate: {}", state());
     }
 
+    public void arrayStartElem(){
+
+        State s = state();
+        if(s != State.NO_CAND){
+            flush(s);
+        }
+
+        try {
+            gen.writeStartArray();
+        }
+        catch (Exception e){
+            throw new TrafoException(e);
+        }
+
+        log.debug("arrayStartElem(). endstate: {}", state());
+    }
+
+    public void arrayEndElem() {
+
+        State s = state();
+        if(s != State.NO_CAND){
+            flush(s);
+        }
+
+        try {
+            gen.writeEndArray();
+        }
+        catch (Exception e){
+            throw new TrafoException(e);
+        }
+
+        log.debug("arrayEndElem(). endstate: {}", state());
+    }
+
     public void paraName(String name) {
 
         State s = state();
@@ -95,7 +129,7 @@ public class ObjectElementBuffer {
     }
 
     private void flush(State currState){
-        //log.debug("flushing... state: {}", currState);
+        log.debug("flushing... state: {}", currState);
         try {
             if (currState == State.CAND_STARTED) {
                 gen.writeStartObject();

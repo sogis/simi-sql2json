@@ -74,23 +74,13 @@ public class JsonElementRouter {
     public void arrayStartElem(){
         log.debug("arrayStartElem()");
 
-        try {
-            gen.writeStartArray();
-        }
-        catch (Exception e) {
-            throw new TrafoException(e);
-        }
+        buf.arrayStartElem();
     }
 
     public void arrayEndElem(){
         log.debug("arrayEndElem()");
 
-        try {
-            gen.writeEndArray();
-        }
-        catch (Exception e) {
-            throw new TrafoException(e);
-        }
+        buf.arrayEndElem();
     }
 
     public void paraName(String name) {

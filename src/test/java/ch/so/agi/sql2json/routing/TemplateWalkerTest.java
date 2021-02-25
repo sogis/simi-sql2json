@@ -10,7 +10,6 @@ import ch.so.agi.sql2json.tag.JsonType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -94,6 +93,14 @@ public class TemplateWalkerTest {
         initConfigForTest();
         execAndCheckValueType(OBJ_MARKER, JsonType.JSON_ELEMENT);
     }
+
+    @Test
+    void list_Nested_OK() throws Exception {
+
+        initConfigForTest();
+        execAndCheckValueType(OBJ_MARKER, JsonType.JSON_ELEMENT);
+    }
+
 
     @Test
     void list_OfJson_OK() throws Exception {
@@ -214,6 +221,8 @@ public class TemplateWalkerTest {
         assertTrue(resJson.contains("§last_element§"), "Resulting json does not contain the marker string");
         assertDoesNotThrow(() -> {mapper.readTree(resJson);});
     }
+
+
 
     private void execAndAssertRaises(ExType exType) throws Exception{
         String template = loadTestJson();
