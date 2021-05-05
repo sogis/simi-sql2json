@@ -4,20 +4,20 @@ java -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -jar ../build/sql2json.jar \
   -c jdbc:postgresql://localhost/postgres \
   -u postgres \
   -p postgres \
-  -t $(pwd)/fat_template_only/template.json \
-  -o $(pwd)/fat_template_only/_result.json
+  -t $(pwd)/fat_complete_json_no_sql_tags/template.json \
+  -o $(pwd)/fat_complete_json_no_sql_tags/_result.json
 
 jarexit=$?
 
-grep -l §last_element§ fat_template_only/_result.json
+grep -l §last_element§ fat_complete_json_no_sql_tags/_result.json
 
 grepexit=$?
 
 if [ $jarexit -ne 0 -o $grepexit -ne 0 ]; then
-  echo fat_boy test failed
+  echo json_no_sql_tags test failed
   exit 1
 else
-  echo fat_template_only test passed
+  echo json_no_sql_tags test passed
   exit 0
 fi
 

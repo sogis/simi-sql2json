@@ -3,6 +3,9 @@ package ch.so.agi.sql2json;
 import ch.so.agi.sql2json.exception.TrafoException;
 import ch.so.agi.sql2json.routing.TemplateWalker;
 
+import ch.so.agi.sql2json.validation.TextFile;
+import ch.so.agi.sql2json.validation.Validator;
+import org.everit.json.schema.ValidationException;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -30,13 +33,20 @@ public class Application {
             try {
                 TemplateWalker.walkTemplate(template, output);
                 log.info("Output json written to {}", outPutPath);
+
+                String schemaPath = Configuration.valueForKey(Configuration.JSON_SCHEMA);
+                if(schemaPath != null && schemaPath.length() > 0){
+                    log.info("Validating against schema {}", schemaPath);
+
+                    Validator.validate(new TextFile(outPutPath), new TextFile(schemaPath));
+                }
             }
             finally {
                 output.close();
             }
         }
         catch (Exception e){
-            log.error("Exception occured. Exiting...");
+            log.error("Exception occured. Exiting...\n");
             throw e;
         }
     }

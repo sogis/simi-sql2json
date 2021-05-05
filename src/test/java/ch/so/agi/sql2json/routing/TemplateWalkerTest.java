@@ -7,6 +7,7 @@ import ch.so.agi.sql2json.exception.ExType;
 import ch.so.agi.sql2json.exception.TrafoException;
 import ch.so.agi.sql2json.tag.Tag;
 import ch.so.agi.sql2json.tag.JsonType;
+import ch.so.agi.sql2json.test.Util;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -332,11 +333,8 @@ public class TemplateWalkerTest {
 
     private static void initConfigForTest(){
 
-        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-        StackTraceElement elem = stacktrace[2]; //Stacktrace-element of the calling method (= test method)
-        String methodName = elem.getMethodName();
-
-        Path p = Path.of("src/test/resources/" + methodName + "/template.json");
+        Path base = Util.deferTestResourcesPathFromCallingMethod(2);
+        Path p = base.resolve("template.json");
 
         String[] args = Arrays.copyOf(CONFIG_TEMPLATE, CONFIG_TEMPLATE.length);
 

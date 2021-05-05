@@ -1,9 +1,11 @@
 package ch.so.agi.sql2json.validation;
 
+import ch.so.agi.sql2json.exception.TrafoException;
 import ch.so.agi.sql2json.routing.JsonElementRouter;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,51 +18,49 @@ public class Validator {
 
     private static Logger log = LoggerFactory.getLogger(Validator.class);
 
-    public static boolean validate(String contentFullPath, String schemaFullPath){
+    public static void validate(TextFile contentFile, TextFile schemaFile){
+        _validate(
+                contentFile.readContentToString(),
+                schemaFile.readContentToString()
+        );
+    }
 
-        boolean res = false;
-
-        JSONObject contentJson = readJson(contentFullPath);
-        JSONObject schemaJson = readJson(schemaFullPath);
-
-        SchemaLoader loader = SchemaLoader.builder()
-                .schemaJson(schemaJson)
-                .draftV7Support()
-                .build();
-        Schema schema = loader.load().build();
+    static void _validate(String content, String schema){
 
         try {
-            schema.validate(contentJson);
-            log.info("Validation against json schema {} passed.", schemaFullPath);
-            res = true;
-        } catch (ValidationException e) {
-            log.info("Validation against json schema {} failed. See following detail messages.", schemaFullPath);
-            log.error(e.getErrorMessage());
+            JSONObject contentJson = new JSONObject(content);
+            JSONObject schemaJson = new JSONObject(schema);
 
-            List<String> innerMessages = e.getAllMessages();
-            if(innerMessages != null){
-                for (String message : innerMessages){
+            SchemaLoader loader = SchemaLoader.builder()
+                    .schemaJson(schemaJson)
+                    .draftV7Support()
+                    .build();
+
+            Schema schemaObj = loader.load().build();
+            schemaObj.validate(contentJson);
+            log.info("Validation against json schema passed.");
+        }
+        catch (ValidationException e) {
+
+            int innerCount = 0;
+            if(e.getCausingExceptions() != null)
+                innerCount = e.getCausingExceptions().size();
+
+            if(innerCount == 0) {
+                log.error("Validation against json schema failed. See following detail message.", innerCount);
+                log.error(e.getMessage());
+            }
+            else{
+                log.error("Validation against json schema failed with {} errors. See following detail messages.", innerCount);
+                for (String message : e.getAllMessages()){
                     log.error(message);
                 }
             }
 
-            res = false;
+            throw e;
         }
-
-        return res;
-    }
-
-    private static JSONObject readJson(String jsonFullPath){
-        JSONObject json = null;
-
-        try(FileInputStream fis = new FileInputStream(jsonFullPath)){
-            byte[] content = fis.readAllBytes();
-            json = new JSONObject(new String(content, StandardCharsets.UTF_8));
+        catch (JSONException je){
+            throw new TrafoException(je);
         }
-        catch(Exception e){
-            throw new RuntimeException(e);
-        }
-
-        return json;
     }
 }

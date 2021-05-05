@@ -17,6 +17,7 @@ public class Configuration {
     public static final String DB_CONNECTION = "c";
     public static final String DB_USER = "u";
     public static final String DB_PASSWORD = "p";
+    public static final String JSON_SCHEMA = "s";
     private static final String HELP = "h";
     private static final String VERSION = "v";
 
@@ -94,20 +95,32 @@ public class Configuration {
 
         this.confMap = new HashMap<String, ConfigurationEntry>();
 
-        addEntry(TEMPLATE_PATH, "SqlTrafo_Templatepath", "Absoluter Dateipfad zum zu verarbeitenden Template. Bsp: opt/user/trafo/wms/template.json");
-        addEntry(OUTPUT_PATH, "SqlTrafo_Outputpath", "Absoluter pfad und Dateiname des output config.json. Bsp: opt/user/trafo/wms/config.json");
-        addEntry(DB_CONNECTION, "SqlTrafo_DbConnection", "JDBC Connection-URL zur abzufragenden DB. Aufbau: jdbc:postgresql://host:port/database");
-        addEntry(DB_USER, "SqlTrafo_DbUser", "Benutzername für die DB-Verbindung");
-        addEntry(DB_PASSWORD, "SqlTrafo_DbPassword", "Passwort für die DB-Verbindung");
+        addEntry(TEMPLATE_PATH, "SqlTrafo_Templatepath",
+                "Absoluter Dateipfad zum zu verarbeitenden Template. Bsp: opt/user/trafo/wms/template.json");
+        addEntry(OUTPUT_PATH, "SqlTrafo_Outputpath",
+                "Absoluter Dateipfad des output config.json. Bsp: opt/user/trafo/wms/config.json");
+        addEntry(DB_CONNECTION, "SqlTrafo_DbConnection",
+                "JDBC Connection-URL zur abzufragenden DB. Aufbau: jdbc:postgresql://host:port/database");
+        addEntry(DB_USER, "SqlTrafo_DbUser",
+                "Benutzername für die DB-Verbindung");
+        addEntry(DB_PASSWORD, "SqlTrafo_DbPassword",
+                "Passwort für die DB-Verbindung");
+        addEntry(JSON_SCHEMA, false, "SqlTrafo_JsonSchema",
+                "Optionaler Pfad zum Json-Schema. Als http(s) oder Dateipfad angeben, sofern der output gegen ein Schema validiert werden soll");
 
         String desc = "Ausgabe von Version und Hilfetext zum Commandline-Tool sql2json";
-        addEntry(HELP, null, desc);
-        addEntry(VERSION, null, desc);
+        addEntry(HELP, false, null, desc);
+        addEntry(VERSION, false, null, desc);
     }
 
     private void addEntry(String cmdLineParam, String envVarName, String description){
+        addEntry(cmdLineParam, true, envVarName, description);
+    }
+
+    private void addEntry(String cmdLineParam, boolean required, String envVarName, String description){
 
         Option o = new Option(cmdLineParam, envVarName != null, description);
+        o.setRequired(required);
 
         ConfigurationEntry c = new ConfigurationEntry();
         c.setCommandLineOption(o);
@@ -132,7 +145,7 @@ public class Configuration {
         for (ConfigurationEntry ce : confMap.values()){
 
             String parName = ce.getCommandLineOption().getOpt();
-            if(HELP.equals(parName) || VERSION.equals(parName))
+            if(HELP.equals(parName) || VERSION.equals(parName) || !(ce.getCommandLineOption().isRequired()))
                 continue;
 
             String val = resolveValue(ce);
