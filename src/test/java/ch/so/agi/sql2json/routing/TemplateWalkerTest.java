@@ -222,8 +222,6 @@ public class TemplateWalkerTest {
         assertDoesNotThrow(() -> {mapper.readTree(resJson);});
     }
 
-
-
     private void execAndAssertRaises(ExType exType) throws Exception{
         String template = loadTestJson();
         ByteArrayOutputStream output = null;

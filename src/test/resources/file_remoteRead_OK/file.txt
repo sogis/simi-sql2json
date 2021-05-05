@@ -1,0 +1,2 @@
+lorem ipsum
+$LAST_LINE$
