@@ -21,7 +21,12 @@ execSql(...) das entsprechende SQL-Query aus. Das in Json-Element(e) umgewandelt
 |`"bar"`|String-Wert des ersten Name-Wert-Paares. Falls kein String passt die Sequenz nicht mehr.|
 |`}`|Ende von Json-Objekt. Vor dem Ende darf nur genau ein Name-Wert-Paar auftreten, sonst passt die Sequenz nicht mehr.|
 
-## Code Erweitern mit weiterem Json-Tag
+### Validierung gegen Json-Schema
+
+Schlanke Implementierung basierend auf der Bibliothek com.github.everit-org:json-schema.
+Integration in den Trafo mittels Klasse [Validator](src/main/java/ch/so/agi/sql2json/validation/Validator.java).
+
+## Code mit weiterem Json-Tag erweitern
 
 Dafür notwendige Arbeiten:
 * Neue Tag-Klasse erstellen, welche vererbt von ch.so.agi.sql2json.tag.Tag
