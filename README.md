@@ -4,6 +4,8 @@ Der sql2json Transformator (Trafo) arbeitet pro Programmaufruf ein Json-Template
 Trafo-Tags ab. Für jedes Trafo-Tag setzt der Trafo ein Sql-Statement auf die Metadatenbank ab und 
 ersetzt das Trafo-Tag mit dem Ergebnis des SQL-Queries.
 
+Falls beim Aufruf ein Json-Schema angegeben wird, validiert der Trafo das erzeugte Json gegen das Schema.
+
 ## Dokumentationen
 
 In den folgenden Kapiteln ist die Konfiguration und Benutzung des Trafo beschrieben. Die Entwicklerdoku ist
@@ -28,10 +30,12 @@ sowohl auf Kommandozeile wie in Umgebungsvariable definiert sind, wird der Wert 
 |DB-Connection|-c|SqlTrafo_DbConnection|JDBC Connection-URL zur abzufragenden DB. Aufbau: jdbc:postgresql://host:port/database|
 |DB-User|-u|SqlTrafo_DbUser|Benutzername für die DB-Verbindung|
 |DB-Password|-p|SqlTrafo_DbPassword|Passwort für die DB-Verbindung|
+|JSON-Schema|-s|SqlTrafo_JsonSchema|Pfad zum JSON-Schema|
 
 Siehe die Integrationstests als Beispiele:
 * [exit_ok.sh](inttest/exit_ok.sh): Aufruf via Kommandozeilen-Parameter
 * [env_ok.sh](inttest/env_ok.sh): Aufruf via Umgebungs-Variablen
+* [validation_ok.sh](inttest/validation_ok.sh): Aufruf der Validierung
 
 ### Logging
 
