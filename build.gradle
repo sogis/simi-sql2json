@@ -88,6 +88,63 @@ task stage(type: Copy, dependsOn: build) {
     }
 }
 
+task print_version(type: Exec, dependsOn: stage){
+    workingDir './inttest'
+    commandLine './print_version.sh'
+}
+
+task env_ok(type: Exec, dependsOn: stage){
+    workingDir './inttest'
+    commandLine './env_ok.sh'
+}
+
+task exit_err(type: Exec, dependsOn: stage){
+    workingDir './inttest'
+    commandLine './exit_err.sh'
+}
+
+task exit_ok(type: Exec, dependsOn: stage){
+    workingDir './inttest'
+    commandLine './exit_ok.sh'
+}
+
+task fatty_ok(type: Exec, dependsOn: stage){
+    workingDir './inttest'
+    commandLine './fatty_ok.sh'
+}
+
+task json_no_sql_tags(type: Exec, dependsOn: stage){
+    workingDir './inttest'
+    commandLine './json_no_sql_tags.sh'
+}
+
+task missing_params(type: Exec, dependsOn: stage){
+    workingDir './inttest'
+    commandLine './missing_params.sh'
+}
+
+task validation_err(type: Exec, dependsOn: stage){
+    workingDir './inttest'
+    commandLine './validation_err.sh'
+}
+
+task validation_ok(type: Exec, dependsOn: stage){
+    workingDir './inttest'
+    commandLine './validation_ok.sh'
+}
+
+task inttest {
+    dependsOn print_version
+    dependsOn env_ok
+    dependsOn exit_err
+    dependsOn exit_ok
+    dependsOn fatty_ok
+    dependsOn json_no_sql_tags
+    dependsOn missing_params
+    dependsOn validation_err
+    dependsOn validation_ok
+}
+
 String getBuildNumber() {
     String val = System.getenv('GITHUB_RUN_NUMBER')
 

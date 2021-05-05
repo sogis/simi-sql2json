@@ -105,22 +105,17 @@ public class Configuration {
                 "Benutzername für die DB-Verbindung");
         addEntry(DB_PASSWORD, "SqlTrafo_DbPassword",
                 "Passwort für die DB-Verbindung");
-        addEntry(JSON_SCHEMA, false, "SqlTrafo_JsonSchema",
+        addEntry(JSON_SCHEMA, "SqlTrafo_JsonSchema",
                 "Optionaler Pfad zum Json-Schema. Als http(s) oder Dateipfad angeben, sofern der output gegen ein Schema validiert werden soll");
 
         String desc = "Ausgabe von Version und Hilfetext zum Commandline-Tool sql2json";
-        addEntry(HELP, false, null, desc);
-        addEntry(VERSION, false, null, desc);
+        addEntry(HELP, null, desc);
+        addEntry(VERSION, null, desc);
     }
 
     private void addEntry(String cmdLineParam, String envVarName, String description){
-        addEntry(cmdLineParam, true, envVarName, description);
-    }
-
-    private void addEntry(String cmdLineParam, boolean required, String envVarName, String description){
 
         Option o = new Option(cmdLineParam, envVarName != null, description);
-        o.setRequired(required);
 
         ConfigurationEntry c = new ConfigurationEntry();
         c.setCommandLineOption(o);

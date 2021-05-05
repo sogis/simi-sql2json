@@ -15,10 +15,10 @@ grep -l §last_element§ bad_conf/_result.json
 grepexit=$?
 
 if [ $jarexit -eq 0 -o $grepexit -ne 0 ]; then # Test fails if sql2json.jar exits with ok value
-  echo err_exit test failed
+  echo exit_err test failed
   exit 1
 else
-  echo err_exit test passed
+  echo exit_err test passed
   exit 0
 fi
 

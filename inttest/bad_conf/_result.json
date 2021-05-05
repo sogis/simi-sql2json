@@ -1,0 +1,1 @@
+[{"ch.so.agi.gemeindegrenzen":"Gemeindegrenzen"},{"$trafo:list":"list.sql","exception":"ch.so.agi.sql2json.exception.TrafoException: list.sql: Query returns unsupported column type timestamptz."},{"$trafo:set":"set.sql","exception":"ch.so.agi.sql2json.exception.TrafoException: set.sql: Query for SetTag must return two columns"},{"key":9999},"§last_element§"]

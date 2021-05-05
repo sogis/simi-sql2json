@@ -14,10 +14,10 @@ grep -l §last_element§ fat_boy/_result.json
 grepexit=$?
 
 if [ $jarexit -ne 0 -o $grepexit -ne 0 ]; then
-  echo fat_boy test failed
+  echo fatty_ok test failed
   exit 1
 else
-  echo fat_boy test passed
+  echo fatty_ok test passed
   exit 0
 fi
 

@@ -14,10 +14,10 @@ grep -l §last_element§ good_conf/_result.json
 grepexit=$?
 
 if [ $jarexit -ne 0 -o $grepexit -ne 0 ]; then
-  echo ok_exit test failed
+  echo exit_ok test failed
   exit 1
 else
-  echo ok_exit test passed
+  echo exit_ok test passed
   exit 0
 fi
 
