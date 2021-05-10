@@ -1,7 +1,6 @@
 plugins {
     id 'java'
-    id 'maven-publish'
-    id "com.jfrog.bintray" version "1.8.4"
+    id "com.github.breadmoirai.github-release" version "2.2.12"
 }
 
 group 'ch.so.agi'
@@ -11,10 +10,6 @@ sourceCompatibility = 11
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
-    /*
-    flatDir {
-        dirs 'importlibs'
-    }*/
 }
 
 dependencies {
@@ -22,7 +17,6 @@ dependencies {
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.1'
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
-    //compile fileTree(include: ['*.jar'], dir: 'importlibs')
     compile 'com.github.everit-org:json-schema:1.12.2'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.3'
@@ -50,32 +44,12 @@ jar {
     }
 }
 
-publishing {
-    publications {
-        mavenPublication(MavenPublication) {
-            from components.java
-        }
-    }
-}
-
-bintray {
-    user = findProperty("sql2json.publish.user")
-    key = findProperty("sql2json.publish.pass")
-    publications = ['mavenPublication']
-    publish = true
-
-    pkg {
-        repo = 'simi'
-        name = 'sql2json'
-        userOrg = 'sogis'
-        licenses = ['MIT']
-        labels = ['simi', 'sql2json', 'sql', 'template', 'json']
-        version {
-            name = project.version
-            desc = project.version
-            released  = new Date()
-        }
-    }
+githubRelease { // call like this: ./gradlew githubRelease -PgitReleaseTok=xxx
+    token property("gitReleaseTok")
+    owner "simi-so"
+    targetCommitish "main"
+    releaseAssets.from("build/sql2json.jar")
+    overwrite true
 }
 
 task stage(type: Copy, dependsOn: build) {
@@ -144,6 +118,40 @@ task inttest {
     dependsOn validation_err
     dependsOn validation_ok
 }
+
+/*
+
+publishing {
+    publications {
+        mavenPublication(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+bintray {
+    user = findProperty("sql2json.publish.user")
+    key = findProperty("sql2json.publish.pass")
+    publications = ['mavenPublication']
+    publish = true
+
+    pkg {
+        repo = 'simi'
+        name = 'sql2json'
+        userOrg = 'sogis'
+        licenses = ['MIT']
+        labels = ['simi', 'sql2json', 'sql', 'template', 'json']
+        version {
+            name = project.version
+            desc = project.version
+            released  = new Date()
+        }
+    }
+}
+
+ */
+
+
 
 String getBuildNumber() {
     String val = System.getenv('GITHUB_RUN_NUMBER')

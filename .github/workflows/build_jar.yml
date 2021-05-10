@@ -29,5 +29,5 @@ jobs:
       - name: Run alle integration tests
         run: ./gradlew inttest
 
-      - name: Upload verified jar to bintray
-        run: ./gradlew bintrayUpload -Psql2json.publish.user=${{ secrets.BINTRAY_USER }} -Psql2json.publish.pass=${{ secrets.BINTRAY_PASS }}
+      - name: Upload verified release to github
+        run: ./gradlew githubRelease -PgitReleaseTok=${{ secrets.RELEASE_TOKEN }}
