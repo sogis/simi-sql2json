@@ -45,7 +45,7 @@ jar {
 }
 
 githubRelease { // call like this: ./gradlew githubRelease -PgitReleaseTok=xxx
-    token property("gitReleaseTok")
+    token project.findProperty('gitReleaseTok') ?: 'UNDEFINED'
     owner "simi-so"
     targetCommitish "main"
     releaseAssets.from("build/sql2json.jar")
