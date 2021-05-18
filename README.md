@@ -1,5 +1,7 @@
 # sql2json
 
+![badge](actions/workflows/build_jar.yml/badge.svg)
+
 Der sql2json Transformator (Trafo) arbeitet pro Programmaufruf ein Json-Template mit n im Template enthaltenen 
 Trafo-Tags ab. Für jedes Trafo-Tag setzt der Trafo ein Sql-Statement auf die Metadatenbank ab und 
 ersetzt das Trafo-Tag mit dem Ergebnis des SQL-Queries.

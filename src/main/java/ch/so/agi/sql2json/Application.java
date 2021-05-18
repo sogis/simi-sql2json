@@ -47,6 +47,9 @@ public class Application {
         }
         catch (Exception e){
             log.error("Exception occured. Exiting...\n");
+            log.error(e.toString());
+            e.printStackTrace();
+
             throw e;
         }
     }

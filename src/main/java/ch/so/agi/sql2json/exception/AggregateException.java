@@ -15,6 +15,21 @@ public class AggregateException extends TrafoException {
     }
 
     @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(super.toString());
+
+        int num = 1;
+        for (TrafoException te : tagExceptions) {
+            sb.append(MessageFormat.format("TagException {0}:", num));
+            sb.append(te.toString());
+
+            num++;
+        }
+        return sb.toString();
+    }
+
+    @Override
     public void printStackTrace(){
         super.printStackTrace();
 
