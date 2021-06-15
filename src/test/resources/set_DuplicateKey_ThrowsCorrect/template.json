@@ -1,0 +1,5 @@
+[{
+  "ch.so.agi.gemeindegrenzen": "Gemeindegrenzen"
+}, {
+  "$trafo:set": "query.sql"
+}]

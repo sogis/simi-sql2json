@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
 import java.sql.*;
+import java.util.HashSet;
 import java.util.Properties;
 
 public class SetTag extends Tag {
@@ -39,20 +40,32 @@ public class SetTag extends Tag {
 
             gen.writeStartObject();
 
+            HashSet<String> keySet = new HashSet<>();
+            String firstDuplicate = null;
+
             int rowCount = 0;
             while (rs.next())
             {
-                gen.writeFieldName(rs.getString(1));
+                String key = rs.getString(1);
+                if(keySet.contains(key))
+                    firstDuplicate = key;
+
+                gen.writeFieldName(key);
                 Tags.writeValue(rs, 2, type, gen);
+
+                keySet.add(key);
                 rowCount++;
             }
             rs.close();
 
             log.info("{}: Processed {} rows.", sqlFileName, rowCount);
+            gen.writeEndObject();
+
             if(rowCount == 0)
                 throw new TrafoException(ExType.NO_ROWS, "{0}: Query returned no rows", sqlFileName);
 
-            gen.writeEndObject();
+            if(firstDuplicate != null) // Exception is important to make sure that all sql queries (select a union all select b) produce "set-wide" unique id's
+                throw new TrafoException(ExType.SET_HAS_DUPLICATES, "Json object key \"{0}\" must be unique", firstDuplicate);
         }
         catch(Exception e){
             if(e instanceof TrafoException)

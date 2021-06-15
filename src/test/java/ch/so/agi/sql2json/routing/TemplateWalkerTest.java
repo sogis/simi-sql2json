@@ -167,6 +167,13 @@ public class TemplateWalkerTest {
     }
 
     @Test
+    void set_DuplicateKey_ThrowsCorrect() throws Exception {
+
+        initConfigForTest();
+        execAndAssertRaises(ExType.SET_HAS_DUPLICATES);
+    }
+
+    @Test
     void elem_OfString_OK() throws Exception {
 
         initConfigForTest();
