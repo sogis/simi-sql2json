@@ -69,8 +69,6 @@ public class ListTag extends Tag {
         if(numCols > 1)
             log.warn("{}: Query returned more than one column. Using first column.", fileName);
 
-        log.info("Column type: int '{}' name '{}'", meta.getColumnType(1), meta.getColumnTypeName (1));
-
         return Tags.inferColType(meta, 1, fileName);
     }
 }
