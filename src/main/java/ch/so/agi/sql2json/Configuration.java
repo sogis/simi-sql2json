@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -55,12 +56,20 @@ public class Configuration {
             throw new TrafoException(e);
         }
 
-        if(para.hasOption(HELP) || para.hasOption(VERSION)){
+
+        if(hasNoOptions(para) || para.hasOption(HELP) || para.hasOption(VERSION)){
             showHelp(opt);
             return;
         }
 
         setCommandLineValues(para);
+    }
+
+    private static boolean hasNoOptions(CommandLine para){
+        boolean hasOptions = (para.getOptions() != null && para.getOptions().length > 0);
+        log.debug("Options: {}", para.getOptions().toString());
+
+        return !hasOptions;
     }
 
     private void showHelp(Options opt){

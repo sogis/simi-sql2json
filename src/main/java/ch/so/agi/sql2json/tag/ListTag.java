@@ -22,7 +22,7 @@ public class ListTag extends Tag {
 
     @Override
     public void execSql(String sqlFileName, JsonGenerator gen){
-        log.info("execSql()");
+        log.info("{}: Starting sql execution", sqlFileName);
 
         String url = Configuration.valueForKey(Configuration.DB_CONNECTION);
         Properties props = new Properties();

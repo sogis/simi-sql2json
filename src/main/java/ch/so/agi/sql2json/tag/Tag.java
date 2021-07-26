@@ -49,7 +49,7 @@ public class Tag {
     }
 
     public void execSql(String sqlFileName, JsonGenerator gen){
-        log.info("execSql()");
+        log.info("{}: Starting sql execution", sqlFileName);
 
         try {
             String output = MessageFormat.format("'{' \"{0}\" : \"{1}\" '}'", fullTagName(), MARKER_VALUE);

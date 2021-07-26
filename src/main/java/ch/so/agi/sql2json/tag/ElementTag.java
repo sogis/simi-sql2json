@@ -22,7 +22,7 @@ public class ElementTag extends Tag {
 
     @Override
     public void execSql(String sqlFileName, JsonGenerator gen){
-        log.info("execSql()");
+        log.info("{}: Starting sql execution", sqlFileName);
 
         String url = Configuration.valueForKey(Configuration.DB_CONNECTION);
         Properties props = new Properties();
@@ -66,7 +66,7 @@ public class ElementTag extends Tag {
         if(numCols > 1)
             log.warn("{}: Query returned more than one column. Using first column.", fileName);
 
-        log.info("Column type: int '{}' name '{}'", meta.getColumnType(1), meta.getColumnTypeName (1));
+        log.debug("Column type: int '{}' name '{}'", meta.getColumnType(1), meta.getColumnTypeName (1));
 
         return Tags.inferColType(meta, 1, fileName);
     }

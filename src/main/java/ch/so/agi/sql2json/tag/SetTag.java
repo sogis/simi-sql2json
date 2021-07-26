@@ -23,7 +23,7 @@ public class SetTag extends Tag {
 
     @Override
     public void execSql(String sqlFileName, JsonGenerator gen){
-        log.info("{}: Executing sql ...");
+        log.info("{}: Starting sql execution", sqlFileName);
 
         String url = Configuration.valueForKey(Configuration.DB_CONNECTION);
         Properties props = new Properties();

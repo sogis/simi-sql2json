@@ -216,6 +216,12 @@ public class TemplateWalkerTest {
     }
 
     @Test
+    void config_NoArgs_PrintsHelp() {
+        Configuration.createConfig4Args(null);
+        assertTrue(Configuration.helpPrinted());
+    }
+
+    @Test
     void mixedTags_WithErrors_WritesToEnd() throws Exception {
 
         initConfigForTest();
