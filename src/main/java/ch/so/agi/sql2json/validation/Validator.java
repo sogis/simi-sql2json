@@ -1,5 +1,6 @@
 package ch.so.agi.sql2json.validation;
 
+import ch.so.agi.sql2json.TextFileReader;
 import ch.so.agi.sql2json.exception.TrafoException;
 import ch.so.agi.sql2json.routing.JsonElementRouter;
 import org.everit.json.schema.Schema;
@@ -18,7 +19,7 @@ public class Validator {
 
     private static Logger log = LoggerFactory.getLogger(Validator.class);
 
-    public static void validate(TextFile contentFile, TextFile schemaFile){
+    public static void validate(TextFileReader contentFile, TextFileReader schemaFile){
         _validate(
                 contentFile.readContentToString(),
                 schemaFile.readContentToString()

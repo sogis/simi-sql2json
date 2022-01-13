@@ -1,13 +1,14 @@
-package ch.so.agi.sql2json.validation;
+package ch.so.agi.sql2json;
 
-import ch.so.agi.sql2json.test.Util;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+        import ch.so.agi.sql2json.exception.TrafoException;
+        import ch.so.agi.sql2json.test.Util;
+        import org.junit.jupiter.api.Assertions;
+        import org.junit.jupiter.api.Test;
 
-import java.net.URI;
-import java.nio.file.Path;
+        import java.net.URI;
+        import java.nio.file.Path;
 
-public class TextFileTest {
+public class TextFileReaderTest {
 
     private static final String LAST_LINE = "$LAST_LINE$";
     private static final String _RESSOURCES_IN_REPO = "https://raw.githubusercontent.com/simi-so/sql2json/main/src/test/resources/file_remoteRead_OK/";
@@ -25,10 +26,10 @@ public class TextFileTest {
 
     @Test
     public void file_localRead_OK(){
-        Path base = Util.deferTestResourcesPathFromCallingMethod(null);
+        Path base = Util.deferTestResourcesAbsPathFromCallingMethod(null);
         Path filePath = base.resolve("file.txt");
 
-        TextFile file = new TextFile(filePath.toString());
+        TextFileReader file = TextFileReader.create(filePath.toString());
         String fileContent = file.readContentToString();
 
         Assertions.assertTrue(fileContent.contains(LAST_LINE));
@@ -38,7 +39,7 @@ public class TextFileTest {
     public void file_remoteRead_OK(){
         String path = RESSOURCES_IN_REPO.resolve("file.txt").toString();
 
-        TextFile file = new TextFile(path);
+        TextFileReader file = TextFileReader.create(path);
         String fileContent = file.readContentToString();
 
         Assertions.assertTrue(fileContent.contains(LAST_LINE));
@@ -47,8 +48,8 @@ public class TextFileTest {
     @Test
     public void file_localRead_missing_ERROR(){
 
-        Path filePath = Util.deferTestResourcesPathFromCallingMethod(null).resolve("nonExistingDummy.txt");
-        TextFile file = new TextFile(filePath.toString());
+        Path filePath = Util.deferTestResourcesAbsPathFromCallingMethod(null).resolve("nonExistingDummy.txt");
+        TextFileReader file = TextFileReader.create(filePath.toUri());
 
         Assertions.assertThrows(Exception.class, () -> file.readContentToString());
     }
@@ -57,8 +58,24 @@ public class TextFileTest {
     public void file_remoteRead_missing_ERROR(){
 
         String path = RESSOURCES_IN_REPO.resolve("nonExistingDummy.txt").toString();
-        TextFile file = new TextFile(path);
+        TextFileReader file = TextFileReader.create(path);
 
         Assertions.assertThrows(Exception.class, () -> file.readContentToString());
     }
+
+    @Test
+    public void file_remoteSiblingRead_OK(){
+        URI mainFile = RESSOURCES_IN_REPO.resolve("nonExistingDummy.txt");
+
+        TextFileReader siblingFile = TextFileReader.create(mainFile,  "file.txt");
+        String fileContent = siblingFile.readContentToString();
+
+        Assertions.assertTrue(fileContent.contains(LAST_LINE));
+    }
+
+    @Test
+    public void file_relativePathThrowsTrafoEx_OK(){
+        Assertions.assertThrows(TrafoException.class, () -> TextFileReader.create("./nonExistingRelativeFile.txt"));
+    }
 }
+

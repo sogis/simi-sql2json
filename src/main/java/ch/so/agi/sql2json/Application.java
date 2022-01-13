@@ -1,11 +1,7 @@
 package ch.so.agi.sql2json;
 
-import ch.so.agi.sql2json.exception.TrafoException;
 import ch.so.agi.sql2json.routing.TemplateWalker;
-
-import ch.so.agi.sql2json.validation.TextFile;
 import ch.so.agi.sql2json.validation.Validator;
-import org.everit.json.schema.ValidationException;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -25,7 +21,8 @@ public class Application {
 
             Configuration.assertComplete();
 
-            String template = loadTemplate(Configuration.valueForKey(Configuration.TEMPLATE_PATH));
+            TextFileReader templateReader = TextFileReader.create(Configuration.valueForKey(Configuration.TEMPLATE_PATH));
+            String template = templateReader.readContentToString();
 
             String outPutPath = Configuration.valueForKey(Configuration.OUTPUT_PATH);
             OutputStream output = new FileOutputStream(outPutPath);
@@ -38,7 +35,7 @@ public class Application {
                 if(schemaPath != null && schemaPath.length() > 0){
                     log.info("Validating against schema {}", schemaPath);
 
-                    Validator.validate(new TextFile(outPutPath), new TextFile(schemaPath));
+                    Validator.validate(TextFileReader.create(outPutPath), TextFileReader.create(schemaPath));
                 }
             }
             finally {
@@ -52,18 +49,5 @@ public class Application {
 
             throw e;
         }
-    }
-
-    public static String loadTemplate(String path){
-
-        String json = null;
-        try (FileInputStream fis = new FileInputStream(path)) {
-            byte[] data = fis.readAllBytes();
-            json = new String(data);
-        }
-        catch(Exception e){
-            throw new TrafoException(e);
-        }
-        return json;
     }
 }

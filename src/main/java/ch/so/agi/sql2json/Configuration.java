@@ -79,11 +79,16 @@ public class Configuration {
 
         String sep = "**************************************************************************";
 
+        String resPathDesc =
+                "Netzpfad: \n" +
+                "- Als absolute URL \"http(s)://...\" oder Dateipfad angeben\n" +
+                "- Bsp. Dateipfad: opt/user/trafo/wms/template.json";
+
         formatter.printHelp(
                 MessageFormat.format("\n{0}\njava -jar sql2json.jar [options]", sep),
                 "options:",
                 opt,
-                MessageFormat.format("---------\nversion: {0}\n{1}", version, sep),
+                MessageFormat.format("{0}\n---------\nVersion: {1}\n{2}",resPathDesc, version, sep),
                 false);
 
         helpPrinted = true;
@@ -105,7 +110,7 @@ public class Configuration {
         this.confMap = new HashMap<String, ConfigurationEntry>();
 
         addEntry(TEMPLATE_PATH, "SqlTrafo_Templatepath",
-                "Absoluter Dateipfad zum zu verarbeitenden Template. Bsp: opt/user/trafo/wms/template.json");
+                "Netzpfad zum zu verarbeitenden Template");
         addEntry(OUTPUT_PATH, "SqlTrafo_Outputpath",
                 "Absoluter Dateipfad des output config.json. Bsp: opt/user/trafo/wms/config.json");
         addEntry(DB_CONNECTION, "SqlTrafo_DbConnection",
@@ -115,7 +120,7 @@ public class Configuration {
         addEntry(DB_PASSWORD, "SqlTrafo_DbPassword",
                 "Passwort für die DB-Verbindung");
         addEntry(JSON_SCHEMA, "SqlTrafo_JsonSchema",
-                "Optionaler Pfad zum Json-Schema. Als http(s) oder Dateipfad angeben, sofern der output gegen ein Schema validiert werden soll");
+                "Optionaler Netzpfad zum Json-Schema");
 
         String desc = "Ausgabe von Version und Hilfetext zum Commandline-Tool sql2json";
         addEntry(HELP, null, desc);

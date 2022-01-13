@@ -26,12 +26,16 @@ sowohl auf Kommandozeile wie in Umgebungsvariable definiert sind, wird der Wert 
 
 |Bezeichnung|Parameter|Umgebungsvariable|Bemerkung|
 |---|---|---|---|
-|Template-Pfad|-t|SqlTrafo_Templatepath|Absoluter Dateipfad zum zu verarbeitenden Template. Bsp: opt/user/trafo/wms/template.json|
-|Pfad zu Output|-o|SqlTrafo_Outputpath|Absoluter pfad und Dateiname des output config.json. Bsp: opt/user/trafo/wms/config.json|
-|DB-Connection|-c|SqlTrafo_DbConnection|JDBC Connection-URL zur abzufragenden DB. Aufbau: jdbc:postgresql://host:port/database|
+|Template-Pfad|-t|SqlTrafo_Templatepath|Netzpfad zum zu verarbeitenden Template.|
+|Pfad zu Output|-o|SqlTrafo_Outputpath|Absoluter Dateipfad des output config.json. Bsp.: opt/user/trafo/wms/config.json|
+|DB-Connection|-c|SqlTrafo_DbConnection|DBC Connection-URL zur abzufragenden DB. Bsp.: jdbc:postgresql://host:port/database|
 |DB-User|-u|SqlTrafo_DbUser|Benutzername für die DB-Verbindung|
 |DB-Password|-p|SqlTrafo_DbPassword|Passwort für die DB-Verbindung|
-|JSON-Schema|-s|SqlTrafo_JsonSchema|Pfad zum JSON-Schema|
+|JSON-Schema|-s|SqlTrafo_JsonSchema|Netzpfad zum JSON-Schema|
+
+Netzpfad:
+* Als absolute URL "http(s)://..." oder Dateipfad angeben
+* Bsp. Dateipfad: opt/user/trafo/wms/template.json
 
 Siehe die Integrationstests als Beispiele:
 * [exit_ok.sh](inttest/exit_ok.sh): Aufruf via Kommandozeilen-Parameter

@@ -2,6 +2,7 @@ package ch.so.agi.sql2json.routing;
 
 import ch.so.agi.sql2json.Application;
 import ch.so.agi.sql2json.Configuration;
+import ch.so.agi.sql2json.TextFileReader;
 import ch.so.agi.sql2json.exception.AggregateException;
 import ch.so.agi.sql2json.exception.ExType;
 import ch.so.agi.sql2json.exception.TrafoException;
@@ -338,15 +339,15 @@ public class TemplateWalkerTest {
 
     private static String loadTestJson(){
 
-        String path = Configuration.valueForKey(Configuration.TEMPLATE_PATH);
-        String json = Application.loadTemplate(path);
+        TextFileReader file = TextFileReader.create(Configuration.valueForKey(Configuration.TEMPLATE_PATH));
+        String json = file.readContentToString();
 
         return json;
     }
 
     private static void initConfigForTest(){
 
-        Path base = Util.deferTestResourcesPathFromCallingMethod(2);
+        Path base = Util.deferTestResourcesAbsPathFromCallingMethod(2);
         Path p = base.resolve("template.json");
 
         String[] args = Arrays.copyOf(CONFIG_TEMPLATE, CONFIG_TEMPLATE.length);

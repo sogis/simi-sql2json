@@ -4,7 +4,7 @@ import java.nio.file.Path;
 
 public class Util {
 
-    public static Path deferTestResourcesPathFromCallingMethod(Integer callDepth){
+    public static Path deferTestResourcesAbsPathFromCallingMethod(Integer callDepth){
 
         if(callDepth == null)
             callDepth = new Integer(1);
@@ -13,6 +13,6 @@ public class Util {
         StackTraceElement elem = stacktrace[callDepth.intValue() + 1]; //Stacktrace-element of the calling method (= test method)
         String methodName = elem.getMethodName();
 
-        return Path.of("src/test/resources/" + methodName);
+        return Path.of("src/test/resources/" + methodName).toAbsolutePath();
     }
 }

@@ -1,6 +1,7 @@
 package ch.so.agi.sql2json.validation;
 
 import ch.so.agi.sql2json.Configuration;
+import ch.so.agi.sql2json.TextFileReader;
 import ch.so.agi.sql2json.tag.JsonType;
 import ch.so.agi.sql2json.test.Util;
 import org.junit.jupiter.api.Assertions;
@@ -40,14 +41,14 @@ public class ValidatorTest {
 
     private static String[] deferContentsFromMethod(){
 
-        Path base = Util.deferTestResourcesPathFromCallingMethod(2);
+        Path base = Util.deferTestResourcesAbsPathFromCallingMethod(2);
 
-        String contentPath = base.resolve("content.json").toString();//Path.of("src/test/resources/" + methodName + "/content.json").toString();
-        String schemaPath = base.resolve("schema.json").toString();//Path.of("src/test/resources/" + methodName + "/schema.json").toString();
+        String contentPath = base.resolve("content.json").toString();
+        String schemaPath = base.resolve("schema.json").toString();
 
         return new String[]{
-                new TextFile(contentPath).readContentToString(),
-                new TextFile(schemaPath).readContentToString()
+                TextFileReader.create(contentPath).readContentToString(),
+                TextFileReader.create(schemaPath).readContentToString(),
         };
     }
 }
