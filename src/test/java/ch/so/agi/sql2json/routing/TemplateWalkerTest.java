@@ -182,6 +182,19 @@ public class TemplateWalkerTest {
     }
 
     @Test
+    void elem_OfString_Remote_OK() throws Exception {
+
+        String[] args = Arrays.copyOf(CONFIG_TEMPLATE, CONFIG_TEMPLATE.length);
+
+        args[TEMPLATE_IDX] = "https://raw.githubusercontent.com/sogis/simi-sql2json/main/src/test/resources/elem_OfString_Remote_OK/template.json";
+
+        Configuration.createConfig4Args(args);
+        Configuration.assertComplete();
+
+        execAndAssertContains("§elem_ok§");
+    }
+
+    @Test
     void elem_OfJson_OK() throws Exception {
 
         initConfigForTest();

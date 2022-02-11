@@ -25,6 +25,22 @@ public class TextFileReaderTest {
     }
 
     @Test
+    public void create_FromAbsolutePath_OK(){
+        TextFileReader reader = TextFileReader.create("/opt/fuu");
+
+        URI u = reader.fileLocation();
+        Assertions.assertEquals("file", u.getScheme(), "Resulting URI scheme must be 'file'");
+    }
+
+    @Test
+    public void create_FromSibling_OK(){
+        TextFileReader reader = TextFileReader.create("/opt/fuu/bar.txt", "buz.txt");
+
+        URI u = reader.fileLocation();
+        Assertions.assertEquals("/opt/fuu/buz.txt", u.getPath());
+    }
+
+    @Test
     public void file_localRead_OK(){
         Path base = Util.deferTestResourcesAbsPathFromCallingMethod(null);
         Path filePath = base.resolve("file.txt");
@@ -65,9 +81,9 @@ public class TextFileReaderTest {
 
     @Test
     public void file_remoteSiblingRead_OK(){
-        URI mainFile = RESSOURCES_IN_REPO.resolve("nonExistingDummy.txt");
+        String mainFileString = RESSOURCES_IN_REPO.resolve("nonExistingDummy.txt").toString();
 
-        TextFileReader siblingFile = TextFileReader.create(mainFile,  "file.txt");
+        TextFileReader siblingFile = TextFileReader.create(mainFileString, "file.txt");
         String fileContent = siblingFile.readContentToString();
 
         Assertions.assertTrue(fileContent.contains(LAST_LINE));

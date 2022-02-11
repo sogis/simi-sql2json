@@ -70,12 +70,14 @@ public class TextFileReader {
         return TextFileReader.create(uri);
     }
 
+
     /**
      * Creates a new TextFileReader from the given URI.
      */
     public static TextFileReader create(URI path) {
         return new TextFileReader(path);
     }
+
 
     /**
      * Constructs a TextFileReader for the sibling File located in the
@@ -84,12 +86,14 @@ public class TextFileReader {
      * @param siblingFileName
      * @return
      */
-    public static TextFileReader create(URI mainFile, String siblingFileName){
+    public static TextFileReader create(String mainFile, String siblingFileName){
 
-        URI sibling = mainFile.resolve(siblingFileName);
+        URI main = URI.create(mainFile);
+        URI sibling = main.resolve(siblingFileName);
 
         return TextFileReader.create(sibling);
     }
+
 
     public URI fileLocation(){
         return fileLocation;

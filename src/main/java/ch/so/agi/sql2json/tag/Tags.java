@@ -1,14 +1,13 @@
 package ch.so.agi.sql2json.tag;
 
 import ch.so.agi.sql2json.Configuration;
+import ch.so.agi.sql2json.TextFileReader;
 import ch.so.agi.sql2json.exception.ExType;
 import ch.so.agi.sql2json.exception.TrafoException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-import java.io.FileInputStream;
-import java.nio.file.Path;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Types;
@@ -18,19 +17,11 @@ public class Tags {
     private static Logger log = LoggerFactory.getLogger(Tags.class);
 
     static String sqlFromFile(String relFilePath){
-        String fileContent = null;
 
-        Path template = Path.of(Configuration.valueForKey(Configuration.TEMPLATE_PATH));
-        Path sql = template.getParent().resolve(relFilePath);
+        String templatePath = Configuration.valueForKey(Configuration.TEMPLATE_PATH);
+        TextFileReader reader = TextFileReader.create(templatePath, relFilePath);
 
-        try (FileInputStream fis = new FileInputStream(sql.toFile())) {
-            byte[] data = fis.readAllBytes();
-            fileContent = new String(data);
-        }
-        catch(Exception e){
-            throw new TrafoException(e);
-        }
-        return fileContent;
+        return  reader.readContentToString();
     }
 
     static JsonType inferColType(ResultSetMetaData meta, int colIdx, String fileName) throws Exception {
