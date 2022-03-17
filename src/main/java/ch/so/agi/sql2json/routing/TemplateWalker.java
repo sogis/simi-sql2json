@@ -2,15 +2,15 @@ package ch.so.agi.sql2json.routing;
 
 import ch.so.agi.sql2json.exception.AggregateException;
 import ch.so.agi.sql2json.exception.TrafoException;
+import ch.so.agi.sql2json.generator.MultiWriter;
+import ch.so.agi.sql2json.generator.TextOutput;
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-import java.io.OutputStream;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Traverses the json template and passes the json elements to the router for processing.
@@ -21,12 +21,18 @@ public class TemplateWalker {
 
     private static ArrayList<TrafoException> tagExceptions = null;
 
-    public static void walkTemplate(String template, OutputStream output) throws Exception {
+    public static void walkTemplate(String template, TextOutput output) throws Exception {
+        LinkedList<TextOutput> list = new LinkedList<>();
+        list.add(output);
+        TemplateWalker.walkTemplate(template, list);
+    }
+
+    public static void walkTemplate(String template, Collection<TextOutput> outputs) throws Exception {
 
         tagExceptions = new ArrayList<>();
         JsonFactory factory = new JsonFactory();
 
-        try(JsonParser parser = factory.createParser(template); JsonGenerator gen = factory.createGenerator(output)){
+        try(JsonParser parser = factory.createParser(template); MultiWriter gen = new MultiWriter(outputs)){
 
             JsonElementRouter router = new JsonElementRouter(gen);
 

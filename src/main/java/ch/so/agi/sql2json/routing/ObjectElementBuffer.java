@@ -1,6 +1,7 @@
 package ch.so.agi.sql2json.routing;
 
 import ch.so.agi.sql2json.exception.TrafoException;
+import ch.so.agi.sql2json.generator.MultiWriter;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ public class ObjectElementBuffer {
 
     private static Logger log = LoggerFactory.getLogger(ObjectElementBuffer.class);
 
-    private JsonGenerator gen;
+    private MultiWriter gen;
 
     private boolean objStarted;
     private String name;
@@ -25,7 +26,7 @@ public class ObjectElementBuffer {
     private String value;
     private  int stringValueCallCount;
 
-    public ObjectElementBuffer(JsonGenerator gen){
+    public ObjectElementBuffer(MultiWriter gen){
         this.gen = gen;
 
         reset();

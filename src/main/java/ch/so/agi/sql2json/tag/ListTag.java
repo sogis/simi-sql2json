@@ -3,6 +3,7 @@ package ch.so.agi.sql2json.tag;
 import ch.so.agi.sql2json.Configuration;
 import ch.so.agi.sql2json.exception.ExType;
 import ch.so.agi.sql2json.exception.TrafoException;
+import ch.so.agi.sql2json.generator.MultiWriter;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ public class ListTag extends Tag {
     }
 
     @Override
-    public void execSql(String sqlFileName, JsonGenerator gen){
+    public void execSql(String sqlFileName, MultiWriter gen){
         log.info("{}: Starting sql execution", sqlFileName);
 
         String url = Configuration.valueForKey(Configuration.DB_CONNECTION);

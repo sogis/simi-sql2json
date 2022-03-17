@@ -14,7 +14,8 @@ repositories {
 
 dependencies {
     compile 'commons-cli:commons-cli:1.4'
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.1'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.6'
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.12.6'
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
     compile 'com.github.everit-org:json-schema:1.12.2'
@@ -107,6 +108,16 @@ task validation_ok(type: Exec, dependsOn: stage){
     commandLine './validation_ok.sh'
 }
 
+task val_yaml_ok(type: Exec, dependsOn: stage){
+    workingDir './inttest'
+    commandLine './val_yaml_ok.sh'
+}
+
+task fatty_yaml_ok(type: Exec, dependsOn: stage){
+    workingDir './inttest'
+    commandLine './fatty_yaml_ok.sh'
+}
+
 task inttest {
     dependsOn print_version
     dependsOn env_ok
@@ -117,6 +128,8 @@ task inttest {
     dependsOn missing_params
     dependsOn validation_err
     dependsOn validation_ok
+    dependsOn val_yaml_ok
+    dependsOn fatty_yaml_ok
 }
 
 /*

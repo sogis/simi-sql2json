@@ -4,6 +4,7 @@ import ch.so.agi.sql2json.Configuration;
 import ch.so.agi.sql2json.TextFileReader;
 import ch.so.agi.sql2json.exception.ExType;
 import ch.so.agi.sql2json.exception.TrafoException;
+import ch.so.agi.sql2json.generator.MultiWriter;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public class Tags {
         return res;
     }
 
-    static void writeValue(ResultSet rs, int colIdx, JsonType jsonType, JsonGenerator gen) throws Exception {
+    static void writeValue(ResultSet rs, int colIdx, JsonType jsonType, MultiWriter gen) throws Exception {
 
         Object val = rs.getObject(colIdx);
         if(rs.wasNull()) {

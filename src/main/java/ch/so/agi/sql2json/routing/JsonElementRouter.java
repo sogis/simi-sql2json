@@ -1,8 +1,8 @@
 package ch.so.agi.sql2json.routing;
 
 import ch.so.agi.sql2json.exception.TrafoException;
+import ch.so.agi.sql2json.generator.MultiWriter;
 import ch.so.agi.sql2json.tag.Tag;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -15,10 +15,10 @@ public class JsonElementRouter {
 
     private static Logger log = LoggerFactory.getLogger(JsonElementRouter.class);
 
-    private JsonGenerator gen;
+    private MultiWriter gen;
     private ObjectElementBuffer buf;
 
-    public JsonElementRouter(JsonGenerator gen){
+    public JsonElementRouter(MultiWriter gen){
         this.gen = gen;
         this.buf = new ObjectElementBuffer(gen);
     }
