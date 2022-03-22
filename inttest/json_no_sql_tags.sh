@@ -1,15 +1,17 @@
 #!/bin/bash
 
+rm fat_complete_json_no_sql_tags/.result.json
+
 java -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -jar ../build/sql2json.jar \
   -c jdbc:postgresql://localhost/postgres \
   -u postgres \
   -p postgres \
   -t $(pwd)/fat_complete_json_no_sql_tags/template.json \
-  -o $(pwd)/fat_complete_json_no_sql_tags/_result.json
+  -o $(pwd)/fat_complete_json_no_sql_tags/.result.json
 
 jarexit=$?
 
-grep -l §last_element§ fat_complete_json_no_sql_tags/_result.json
+grep -l §last_element§ fat_complete_json_no_sql_tags/.result.json
 
 grepexit=$?
 
