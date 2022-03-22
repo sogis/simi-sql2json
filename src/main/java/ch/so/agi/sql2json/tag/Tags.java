@@ -69,6 +69,6 @@ public class Tags {
             gen.writeBoolean(rs.getBoolean(colIdx));
         }
 
-        //gen.writeRaw(System.lineSeparator());
+        gen.writeRaw(System.lineSeparator());
     }
 }

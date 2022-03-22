@@ -91,7 +91,7 @@ public class TemplateWalker {
         JsonGenerator res = null;
 
         JsonFactory f = new JsonFactory();
-        res = f.createGenerator(file, JsonEncoding.UTF8); //.useDefaultPrettyPrinter();
+        res = f.createGenerator(file, JsonEncoding.UTF8).useDefaultPrettyPrinter();
 
         return res;
     }
