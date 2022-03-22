@@ -5,7 +5,7 @@ java -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -jar ../build/sql2json.jar \
   -u postgres \
   -p postgres \
   -t $(pwd)/validation_error/content.json \
-  -o $(pwd)/validation_error/.result.json \
+  -o $(pwd)/validation_error/_result.json \
   -s $(pwd)/validation_error/schema.json
 
 jarexit=$?
