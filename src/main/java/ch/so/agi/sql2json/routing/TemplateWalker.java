@@ -2,15 +2,13 @@ package ch.so.agi.sql2json.routing;
 
 import ch.so.agi.sql2json.exception.AggregateException;
 import ch.so.agi.sql2json.exception.TrafoException;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.*;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-import java.io.OutputStream;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Traverses the json template and passes the json elements to the router for processing.
@@ -21,12 +19,12 @@ public class TemplateWalker {
 
     private static ArrayList<TrafoException> tagExceptions = null;
 
-    public static void walkTemplate(String template, OutputStream output) throws Exception {
+    public static void walkTemplate(String template, File output) throws Exception {
 
         tagExceptions = new ArrayList<>();
         JsonFactory factory = new JsonFactory();
 
-        try(JsonParser parser = factory.createParser(template); JsonGenerator gen = factory.createGenerator(output)){
+        try(JsonParser parser = factory.createParser(template); JsonGenerator gen = writerForFile(output)){
 
             JsonElementRouter router = new JsonElementRouter(gen);
 
@@ -86,6 +84,16 @@ public class TemplateWalker {
         if(tagExceptions.size() > 0){
             throw new AggregateException(tagExceptions);
         }
+    }
+
+
+    private static JsonGenerator writerForFile(File file) throws IOException {
+        JsonGenerator res = null;
+
+        JsonFactory f = new JsonFactory();
+        res = f.createGenerator(file, JsonEncoding.UTF8); //.useDefaultPrettyPrinter();
+
+        return res;
     }
 
     static void addTagException(TrafoException te){

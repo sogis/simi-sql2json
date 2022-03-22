@@ -1,6 +1,6 @@
-[{
-  "ch.so.agi.gemeindegrenzen": "Gemeindegrenzen"
-}, {
-  "$trafo:list": "list.sql"
-}, "§last_element§"
-]
+{
+  "list": {
+    "$trafo:list": "list.sql"
+  },
+  "last": "§last_element§"
+}

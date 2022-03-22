@@ -1,1 +1,6 @@
-{"rectangle":{"a":-5,"b":"asd"}}
+{
+  "rectangle" : {
+    "a" : -5,
+    "b" : "asd"
+  }
+}

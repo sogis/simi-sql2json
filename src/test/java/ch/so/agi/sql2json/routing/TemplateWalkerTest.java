@@ -1,6 +1,5 @@
 package ch.so.agi.sql2json.routing;
 
-import ch.so.agi.sql2json.Application;
 import ch.so.agi.sql2json.Configuration;
 import ch.so.agi.sql2json.TextFileReader;
 import ch.so.agi.sql2json.exception.AggregateException;
@@ -15,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 
@@ -47,13 +47,11 @@ public class TemplateWalkerTest {
 
         initConfigForTest();
         String template = loadTestJson();
-        ByteArrayOutputStream output = null;
+        File output = tempFile();
 
         try {
-            output = new ByteArrayOutputStream();
-
             TemplateWalker.walkTemplate(template, output);
-            String resJson = readAll(output);
+            String resJson = Files.readString(output.toPath());
 
             assertEquals(mapper.readTree(template), mapper.readTree(resJson));
         }
@@ -67,13 +65,11 @@ public class TemplateWalkerTest {
 
         initConfigForTest();
         String template = loadTestJson();
-        ByteArrayOutputStream output = null;
+        File output = tempFile();
 
         try {
-            output = new ByteArrayOutputStream();
-
             TemplateWalker.walkTemplate(template, output);
-            String resJson = readAll(output);
+            String resJson = Files.readString(output.toPath());
 
             assertEquals(mapper.readTree(template), mapper.readTree(resJson));
         }
@@ -241,24 +237,22 @@ public class TemplateWalkerTest {
         initConfigForTest();
 
         String template = loadTestJson();
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        File output = tempFile();
 
         assertThrows(AggregateException.class, () -> {TemplateWalker.walkTemplate(template, output);});
 
-        String resJson = readAll(output);
+        String resJson = Files.readString(output.toPath());
         assertTrue(resJson.contains("§last_element§"), "Resulting json does not contain the marker string");
-        assertDoesNotThrow(() -> {mapper.readTree(resJson);});
+        assertDoesNotThrow(() -> mapper.readTree(resJson));
     }
 
     private void execAndAssertRaises(ExType exType) throws Exception{
         String template = loadTestJson();
-        ByteArrayOutputStream output = null;
+        File output = tempFile();
 
         try {
-            output = new ByteArrayOutputStream();
-
             TemplateWalker.walkTemplate(template, output);
-            readAll(output);
+            Files.readString(output.toPath());
         }
         catch(AggregateException t){
             if(!exType.equals(t.firstException().getType()))
@@ -271,13 +265,11 @@ public class TemplateWalkerTest {
 
     private void execAndCheckValueType(String jsonObjectKey, JsonType valueType) throws Exception{
         String template = loadTestJson();
-        ByteArrayOutputStream output = null;
+        File output = tempFile();
 
         try {
-            output = new ByteArrayOutputStream();
-
             TemplateWalker.walkTemplate(template, output);
-            String resJson = readAll(output);
+            String resJson = Files.readString(output.toPath());
 
             JsonNode root = mapper.readTree(resJson); // the tested json object
             JsonNode inner = root.findValue(jsonObjectKey);
@@ -313,18 +305,12 @@ public class TemplateWalkerTest {
     }
 
     private void execAndAssertContains(String outputMarker) throws Exception{
-        execAndAssertContains(outputMarker, "");
-    }
-
-    private void execAndAssertContains(String outputMarker, String pathToSetOrArray) throws Exception{
         String template = loadTestJson();
-        ByteArrayOutputStream output = null;
+        File output = tempFile();
 
         try {
-            output = new ByteArrayOutputStream();
-
             TemplateWalker.walkTemplate(template, output);
-            String resJson = readAll(output);
+            String resJson = Files.readString(output.toPath());
 
             assertTrue(resJson.contains(outputMarker), "Resulting json does not contain the marker string");
             assertDoesNotThrow(() -> {mapper.readTree(resJson);});
@@ -334,21 +320,16 @@ public class TemplateWalkerTest {
         }
     }
 
-    private static void handle(Exception e, ByteArrayOutputStream out) throws Exception {
+    private static void handle(Exception e, File textFile) throws Exception {
         System.err.println("Error occured. Written json-output before error: ");
         try{
-            String json = readAll(out);
+            String json = Files.readString(textFile.toPath());
             System.err.println(json);
         }
         catch(Exception inner){}
 
         throw e;
     }
-
-    private static String readAll(ByteArrayOutputStream outStream){
-        return new String(outStream.toByteArray());
-    }
-
 
     private static String loadTestJson(){
 
@@ -369,5 +350,15 @@ public class TemplateWalkerTest {
 
         Configuration.createConfig4Args(args);
         Configuration.assertComplete();
+    }
+
+    private static File tempFile(){
+        File res = null;
+        try{
+            res = File.createTempFile("sql2json","txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 }

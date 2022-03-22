@@ -68,5 +68,7 @@ public class Tags {
         else if(jsonType == JsonType.BOOLEAN){
             gen.writeBoolean(rs.getBoolean(colIdx));
         }
+
+        //gen.writeRaw(System.lineSeparator());
     }
 }
